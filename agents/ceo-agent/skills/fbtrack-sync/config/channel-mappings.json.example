@@ -1,0 +1,15 @@
+{
+  "slack_channels": {
+    "partner-alpha": "Partner Alpha Updates",
+    "partner-beta": "Partner Beta Sync",
+    "sales-team": "Sales Team Channel"
+  },
+  "telegram_chats": {
+    "-1001234567890": "Partner Alpha Group",
+    "-1009876543210": "Sales Team"
+  },
+  "fireflies_meeting_mappings": {
+    "Alpha Corp Weekly": "Partner Alpha",
+    "Beta Inc Standup": "Partner Beta"
+  }
+}

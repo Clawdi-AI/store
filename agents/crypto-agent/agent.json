@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "name": "Crypto Trader",
+  "emoji": "💰",
+  "description": "Full-stack crypto trading agent — wallet management, DEX/CEX trading, prediction markets, market intelligence, and social signals across 20+ chains",
+  "headline": "Full-stack crypto trading across 20+ chains with DEX, DeFi, and social signals",
+  "category": "finance",
+  "author": "Community",
+  "tags": [
+    "crypto",
+    "trading",
+    "defi",
+    "web3",
+    "okx"
+  ],
+  "skills": {
+    "inline": [
+      "bridge",
+      "okx-agentic-wallet",
+      "okx-dex-swap",
+      "okx-dex-market",
+      "okx-wallet-portfolio",
+      "okx-onchain-gateway",
+      "okx-security",
+      "okx-defi-invest",
+      "okx-defi-portfolio",
+      "okx-dex-token",
+      "okx-dex-signal",
+      "okx-dex-trenches",
+      "okx-audit-log",
+      "okx-x402-payment",
+      "opennews",
+      "opentwitter",
+      "opentrade-dex-swap",
+      "opentrade-market",
+      "opentrade-portfolio",
+      "opentrade-token",
+      "opentrade-gateway",
+      "okx-cex",
+      "opentrade-newsliquid",
+      "opentrade-wallet",
+      "polymarket"
+    ]
+  },
+  "tools": {
+    "allow": [
+      "group:subagent"
+    ]
+  },
+  "suggested_prompts": [
+    "Check my wallet portfolio across all chains",
+    "Swap 0.1 ETH to USDC on the best DEX",
+    "What are the trending tokens on Solana right now?",
+    "Analyze the security of this token contract"
+  ],
+  "featured": false,
+  "trust_level": "community",
+  "languages": [],
+  "avatar_url": "https://assets.clawdi.ai/assets/crypto-agent.jpg"
+}

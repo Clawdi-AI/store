@@ -1,0 +1,59 @@
+{
+  "name": "feedback-tracker",
+  "version": "1.0.0",
+  "description": "CLI tool for syncing Telegram messages and extracting structured feedback",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "fbtrack": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "tsx src/cli/index.ts",
+    "start": "node dist/cli/index.js",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:real-ai": "vitest run --config vitest.real-ai.config.ts",
+    "test:integration": "vitest run tests/integration/",
+    "backup": "./scripts/backup-data.sh"
+  },
+  "keywords": [
+    "telegram",
+    "feedback",
+    "cli",
+    "analytics"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "fs-extra": "^11.3.1",
+    "openai": "^5.16.0",
+    "ora": "^8.2.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "telegram": "^2.26.22",
+    "winston": "^3.17.0",
+    "zod": "^4.1.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.34.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

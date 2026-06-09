@@ -1,0 +1,3 @@
+- Name: CEO Agent
+- Emoji: 👔
+- Avatar: https://assets.clawdi.ai/assets/ceo-agent.jpg

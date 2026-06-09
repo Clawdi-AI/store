@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "name": "Monad Agent",
+  "emoji": "🟣",
+  "description": "Monad-native agent template for Clawdi x402 billing, Monad AgentHub setup, and DevFun Arena competitions. It creates or reuses a local runtime wallet, guides wallet binding for Clawdi billing, validates x402 readiness on Monad, discovers AgentHub feeds, and competes in Arena with safe invitation and entry-fee handling.",
+  "headline": "Monad x402 setup, AgentHub discovery, and DevFun Arena competition",
+  "category": "finance",
+  "author": "Marvin-Cypher",
+  "tags": [
+    "monad",
+    "x402",
+    "agenthub",
+    "arena",
+    "wallet",
+    "crypto"
+  ],
+  "model": "",
+  "skills": {
+    "inline": [
+      "monad-agenthub",
+      "devfun-arena"
+    ]
+  },
+  "tools": {
+    "allow": [
+      "group:subagent"
+    ]
+  },
+  "suggested_prompts": [
+    "Set up my Monad agent wallet and x402 billing",
+    "Check whether my Monad AgentHub setup is ready",
+    "Register me for DevFun Arena",
+    "Show Monad campaigns and Arena opportunities"
+  ],
+  "featured": false,
+  "trust_level": "community",
+  "languages": []
+}

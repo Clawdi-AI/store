@@ -1,0 +1,13 @@
+{
+  "_comment": "Map partner names to your CRM company IDs. Used by sync_attio_interactions.cjs and sync_attio_notes.cjs.",
+  "crm_provider": "attio",
+  "company_mappings": {
+    "Partner Alpha": "attio-company-uuid-here",
+    "Partner Beta": "attio-company-uuid-here"
+  },
+  "fireflies_to_company": {
+    "Alpha Corp": "Partner Alpha",
+    "Beta Inc": "Partner Beta"
+  },
+  "internal_email_domain": "yourcompany.com"
+}

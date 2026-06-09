@@ -1,0 +1,32 @@
+# Runtime
+.secrets/
+summarizer-files/
+files/
+*.mp3
+*.mp4
+*.wav
+*.srt
+*.png
+node_modules/
+venv/
+
+# fbtrack data (synced messages, extractions)
+skills/fbtrack-sync/data/
+skills/fbtrack-sync/.env
+skills/fbtrack-sync/config/chats.txt
+skills/fbtrack-sync/config/channel-mappings.json
+skills/fbtrack-sync/config/crm-mappings.json
+skills/fbtrack-sync/dist/
+skills/fbtrack-sync/sessions/
+
+# gstack runtime
+skills/gstack/browse/dist/
+skills/gstack/node_modules/
+.gstack/
+
+# Agent memory
+memory/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,89 @@
+{
+  "id": "ceo-agent",
+  "version": 1,
+  "name": "CEO Agent",
+  "emoji": "\ud83d\udc54",
+  "description": "AI chief of staff that keeps you informed across every channel. Syncs conversations from Telegram, Slack, and meeting tools into weekly intelligence reports. Pushes action items to your project manager and CRM. Summarizes any content \u2014 video, audio, PDFs, web pages. Connects 20+ apps. Has persistent knowledge brain (gbrain) for cross-session memory.",
+  "headline": "Your AI chief of staff \u2014 weekly reports, knowledge brain, and 20+ app connections",
+  "category": "productivity",
+  "author": "Clawdi",
+  "tags": [
+    "productivity",
+    "meetings",
+    "crm",
+    "summarizer",
+    "reports",
+    "knowledge"
+  ],
+  "model": "",
+  "os": [],
+  "skills": [
+    "summarize-pro",
+    "markmap-mindmap-export",
+    "fbtrack-sync",
+    "gstack",
+    "gbrain"
+  ],
+  "tools": {
+    "allow": [
+      "group:subagent"
+    ]
+  },
+  "suggested_prompts": [
+    "Generate my weekly business report",
+    "Summarize this YouTube video",
+    "What meetings do I have this week?",
+    "Sync my Slack and Gmail conversations",
+    "What did we decide about pricing last week?"
+  ],
+  "featured": true,
+  "trust_level": "official",
+  "languages": [
+    "en"
+  ],
+  "formData": {
+    "fields": [
+      {
+        "key": "transcribe_api_key",
+        "label": "Transcription API Key",
+        "type": "password",
+        "required": false,
+        "placeholder": "sk-...",
+        "description": "OpenAI-compatible API key for audio/video transcription. Only needed for audio/video content."
+      },
+      {
+        "key": "transcribe_base_url",
+        "label": "Transcription API Base URL",
+        "type": "text",
+        "required": false,
+        "placeholder": "https://api.openai.com/v1",
+        "description": "Transcription API endpoint. Leave blank to use OpenAI."
+      },
+      {
+        "key": "fireflies_api_key",
+        "label": "Fireflies API Key (optional)",
+        "type": "password",
+        "required": false,
+        "placeholder": "ff-...",
+        "description": "Fireflies.ai API key for meeting transcript integration."
+      },
+      {
+        "key": "telegram_api_id",
+        "label": "Telegram API ID (optional)",
+        "type": "text",
+        "required": false,
+        "placeholder": "12345678",
+        "description": "Telegram API ID for conversation tracking. Get from https://my.telegram.org."
+      },
+      {
+        "key": "telegram_api_hash",
+        "label": "Telegram API Hash (optional)",
+        "type": "password",
+        "required": false,
+        "placeholder": "",
+        "description": "Telegram API Hash (paired with API ID above)."
+      }
+    ],
+    "target": ".secrets/transcribe-config.json"
+  }
+}

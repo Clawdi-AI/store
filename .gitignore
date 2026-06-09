@@ -1,0 +1,43 @@
+# Dependencies and build output
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.secrets/
+**/.secrets/
+**/USER.local.md
+
+# Agent runtime data
+**/memory/
+**/sessions/
+**/summarizer-files/
+**/files/
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+**/*.log
+**/.openclaw/
+**/.arena-credentials
+**/monad-wallet.json
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

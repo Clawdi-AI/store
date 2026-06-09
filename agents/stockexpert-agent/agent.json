@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "name": "Stock Expert",
+  "emoji": "\ud83d\udcc8",
+  "description": "AI-powered stock research agent for US & A-share markets. Real-time quotes, SEC filings, A-share announcements, deep multi-dimensional analysis, and trade review. Includes short-selling scanner with daily automated scans, portfolio monitoring, and paper trading.",
+  "headline": "Research US & A-share stocks with real-time data and deep analysis",
+  "category": "finance",
+  "author": "xiaolu7586",
+  "tags": [
+    "stocks",
+    "finance",
+    "analysis",
+    "trading",
+    "short-selling",
+    "scanner"
+  ],
+  "model": "claude-sonnet-4-6",
+  "skills": {
+    "inline": [
+      "stock-announcement-fetcher",
+      "trading-coach",
+      "stock-info-explorer",
+      "stock-deep-analyzer",
+      "short-scanner"
+    ]
+  },
+  "suggested_prompts": [
+    "Analyze AAPL stock with a deep multi-dimensional breakdown",
+    "What are the latest SEC filings for TSLA?",
+    "Compare NVDA and AMD on fundamentals and technicals",
+    "Review my recent trades and suggest improvements",
+    "Run a short scan across all sectors",
+    "Check my short portfolio exposure"
+  ],
+  "featured": false,
+  "trust_level": "community",
+  "languages": [],
+  "avatar_url": "https://assets.clawdi.ai/assets/stockexpert-agent.jpg"
+}
