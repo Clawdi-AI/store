@@ -42,7 +42,7 @@ For user-level installs, add `--global`; for project-level installs, add `--proj
 
 ## CLI Version and Update Cadence
 
-Prefer `npx foc-cli ...` so commands resolve through the current published package instead of a stale global install.
+Prefer `npx --yes foc-cli ...` so commands resolve through the current published package instead of a stale global install.
 
 For active FOC work, check the CLI interface at the start of each session. If using a global install, update it at least weekly and whenever command help/schema disagrees with docs:
 
@@ -56,27 +56,27 @@ foc-cli --help
 Always inspect help or schema before running an operational command:
 
 ```bash
-npx foc-cli --help
-npx foc-cli <command> -h
-npx foc-cli <command> --schema
+npx --yes foc-cli --help
+npx --yes foc-cli <command> -h
+npx --yes foc-cli <command> --schema
 ```
 
 Prefer structured output when an agent needs to parse results:
 
 ```bash
-npx foc-cli <command> --json
+npx --yes foc-cli <command> --json
 ```
 
 ## Common Starting Points
 
 ```bash
-npx foc-cli wallet init --auto
-npx foc-cli wallet balance --json
-npx foc-cli wallet fund
-npx foc-cli wallet deposit <amount>
-npx foc-cli upload <path>
-npx foc-cli dataset list --json
-npx foc-cli provider list --json
+npx --yes foc-cli wallet init --auto
+npx --yes foc-cli wallet balance --json
+npx --yes foc-cli wallet fund
+npx --yes foc-cli wallet deposit <amount>
+npx --yes foc-cli upload <path>
+npx --yes foc-cli dataset list --json
+npx --yes foc-cli provider list --json
 ```
 
 ## Documentation
@@ -84,9 +84,9 @@ npx foc-cli provider list --json
 For current Filecoin Onchain Cloud docs, use the companion `foc-docs` skill or query the CLI docs command:
 
 ```bash
-npx foc-cli docs --prompt "upload files"
-npx foc-cli docs --prompt "payments"
-npx foc-cli docs --prompt "PDP"
+npx --yes foc-cli docs --prompt "upload files"
+npx --yes foc-cli docs --prompt "payments"
+npx --yes foc-cli docs --prompt "PDP"
 ```
 
 ## Safety

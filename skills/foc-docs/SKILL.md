@@ -32,24 +32,24 @@ Preferred refresh command:
 npx --yes skills update foc-docs --yes
 ```
 
-For user-level installs, add `--global`; for project-level installs, add `--project` if the host agent needs an explicit scope. Use `npx foc-cli docs ...` for live documentation lookup so results track the current published CLI/docs integration.
+For user-level installs, add `--global`; for project-level installs, add `--project` if the host agent needs an explicit scope. Use `npx --yes foc-cli docs ...` for live documentation lookup so results track the current published CLI/docs integration.
 
 ## Search First
 
 Search by prompt when you need current docs:
 
 ```bash
-npx foc-cli docs --prompt "upload files"
-npx foc-cli docs --prompt "payments"
-npx foc-cli docs --prompt "PDP"
-npx foc-cli docs --prompt "Synapse SDK"
+npx --yes foc-cli docs --prompt "upload files"
+npx --yes foc-cli docs --prompt "payments"
+npx --yes foc-cli docs --prompt "PDP"
+npx --yes foc-cli docs --prompt "Synapse SDK"
 ```
 
 When a specific page is known, fetch it directly:
 
 ```bash
-npx foc-cli docs --url <url>
-npx foc-cli docs --url <url> --maxDepth 6
+npx --yes foc-cli docs --url <url>
+npx --yes foc-cli docs --url <url> --maxDepth 6
 ```
 
 ## Agent Guidance
