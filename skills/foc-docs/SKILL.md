@@ -14,10 +14,10 @@ Source: https://github.com/FIL-Builders/foc-cli
 If the host agent supports installing external skills, install the upstream docs skill from GitHub:
 
 ```bash
-npx skills add FIL-Builders/foc-cli --skill foc-docs
+npx skills add FIL-Builders/foc-cli --skill foc-docs --yes
 ```
 
-Store it in the agent's normal skills directory as managed by `skills.sh` / the host agent. This store skill should remain a lightweight catalog wrapper, not a copied documentation bundle.
+Use `--global --yes` only when a user-level install is desired. Store it in the agent's normal skills directory as managed by `skills.sh` / the host agent. This store skill should remain a lightweight catalog wrapper, not a copied documentation bundle.
 
 Refresh the upstream docs skill:
 
@@ -26,7 +26,13 @@ Refresh the upstream docs skill:
 - after upstream `FIL-Builders/foc-cli` or Filecoin Onchain Cloud docs changes,
 - at least weekly for active projects.
 
-Use `npx foc-cli docs ...` for live documentation lookup so results track the current published CLI/docs integration.
+Preferred refresh command:
+
+```bash
+npx skills update foc-docs --yes
+```
+
+For user-level installs, add `--global`; for project-level installs, add `--project` if the host agent needs an explicit scope. Use `npx foc-cli docs ...` for live documentation lookup so results track the current published CLI/docs integration.
 
 ## Search First
 

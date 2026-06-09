@@ -18,11 +18,11 @@ This store skill is a lightweight catalog wrapper. Do not rely on hardcoded comm
 If the host agent supports installing external skills, install the upstream skill from GitHub rather than copying its contents into this store skill:
 
 ```bash
-npx skills add FIL-Builders/foc-cli --skill foc-cli
-npx skills add FIL-Builders/foc-cli --skill foc-docs
+npx skills add FIL-Builders/foc-cli --skill foc-cli --yes
+npx skills add FIL-Builders/foc-cli --skill foc-docs --yes
 ```
 
-Store the installed upstream skill in the agent's normal skills directory as managed by `skills.sh` / the host agent. Do not vendor a second copy inside project repositories unless the user explicitly asks.
+Use `--global --yes` only when a user-level install is desired. Store the installed upstream skill in the agent's normal skills directory as managed by `skills.sh` / the host agent. Do not vendor a second copy inside project repositories unless the user explicitly asks.
 
 Refresh the upstream skill:
 
@@ -31,7 +31,14 @@ Refresh the upstream skill:
 - after upstream `FIL-Builders/foc-cli` releases or documentation changes,
 - at least weekly for active projects.
 
-Use the same install command to refresh unless the host agent documents a more specific update command.
+Preferred refresh commands:
+
+```bash
+npx skills update foc-cli --yes
+npx skills update foc-docs --yes
+```
+
+For user-level installs, add `--global`; for project-level installs, add `--project` if the host agent needs an explicit scope.
 
 ## CLI Version and Update Cadence
 
