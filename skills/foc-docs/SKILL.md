@@ -9,6 +9,25 @@ Use the upstream `foc-cli docs` command as the source of truth for Filecoin Onch
 
 Source: https://github.com/FIL-Builders/foc-cli
 
+## Upstream Skill Location and Sync
+
+If the host agent supports installing external skills, install the upstream docs skill from GitHub:
+
+```bash
+npx skills add FIL-Builders/foc-cli --skill foc-docs
+```
+
+Store it in the agent's normal skills directory as managed by `skills.sh` / the host agent. This store skill should remain a lightweight catalog wrapper, not a copied documentation bundle.
+
+Refresh the upstream docs skill:
+
+- at the start of a new long-running FOC documentation or implementation task,
+- whenever docs output seems stale or incomplete,
+- after upstream `FIL-Builders/foc-cli` or Filecoin Onchain Cloud docs changes,
+- at least weekly for active projects.
+
+Use `npx foc-cli docs ...` for live documentation lookup so results track the current published CLI/docs integration.
+
 ## Search First
 
 Search by prompt when you need current docs:

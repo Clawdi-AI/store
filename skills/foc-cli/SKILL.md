@@ -11,7 +11,38 @@ Source: https://github.com/FIL-Builders/foc-cli
 
 ## Operating Principle
 
-This store skill is a lightweight catalog wrapper. Do not rely on hardcoded command details here. Before taking action, discover the current upstream interface from the CLI itself.
+This store skill is a lightweight catalog wrapper. Do not rely on hardcoded command details here. The upstream `FIL-Builders/foc-cli` repository and the published `foc-cli` package are the source of truth.
+
+## Upstream Skill Location and Sync
+
+If the host agent supports installing external skills, install the upstream skill from GitHub rather than copying its contents into this store skill:
+
+```bash
+npx skills add FIL-Builders/foc-cli --skill foc-cli
+npx skills add FIL-Builders/foc-cli --skill foc-docs
+```
+
+Store the installed upstream skill in the agent's normal skills directory as managed by `skills.sh` / the host agent. Do not vendor a second copy inside project repositories unless the user explicitly asks.
+
+Refresh the upstream skill:
+
+- at the start of a new long-running FOC task,
+- whenever a command appears missing or behavior differs from this wrapper,
+- after upstream `FIL-Builders/foc-cli` releases or documentation changes,
+- at least weekly for active projects.
+
+Use the same install command to refresh unless the host agent documents a more specific update command.
+
+## CLI Version and Update Cadence
+
+Prefer `npx foc-cli ...` so commands resolve through the current published package instead of a stale global install.
+
+For active FOC work, check the CLI interface at the start of each session. If using a global install, update it at least weekly and whenever command help/schema disagrees with docs:
+
+```bash
+npm install -g foc-cli@latest
+foc-cli --help
+```
 
 ## Discovery First
 
