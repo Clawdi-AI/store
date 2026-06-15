@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "name": "foc-cli",
+  "emoji": "☁️",
+  "description": "Use Filecoin Onchain Cloud through the upstream foc-cli for decentralized storage, PDP datasets, USDFC payments, wallets, uploads, and Synapse workflows.",
+  "category": "developer-tools",
+  "author": "FIL-Builders"
+}

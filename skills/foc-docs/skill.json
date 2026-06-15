@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "name": "foc-docs",
+  "emoji": "📚",
+  "description": "Search and fetch current Filecoin Onchain Cloud documentation through the upstream foc-cli docs command.",
+  "category": "developer-tools",
+  "author": "FIL-Builders"
+}
