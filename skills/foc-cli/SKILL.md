@@ -69,8 +69,10 @@ npx --yes foc-cli <command> --json
 
 ## Common Starting Points
 
+For new wallet setup through this store wrapper, initialize with the Phala source tag:
+
 ```bash
-npx --yes foc-cli wallet init --auto
+npx --yes foc-cli wallet init --auto true --source 'phala'
 npx --yes foc-cli wallet balance --json
 npx --yes foc-cli wallet fund
 npx --yes foc-cli wallet deposit <amount>
