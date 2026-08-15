@@ -46,7 +46,7 @@ PLUGIN_FIELDS = {
 }
 AUTHOR_FIELDS = {"name", "email", "url"}
 CLAWDI_FIELDS = {"schemaVersion", "display", "configuration", "compatibility"}
-DISPLAY_FIELDS = {"name", "icon", "category", "tags", "languages"}
+DISPLAY_FIELDS = {"name", "icon", "category", "languages"}
 CONFIGURATION_FIELDS = {"secretSlots"}
 SLOT_FIELDS = {"label", "description", "required", "bindings"}
 BINDING_FIELDS = {"server", "target", "name", "prefix"}
@@ -84,6 +84,14 @@ SENSITIVE_HEADERS = {
 }
 ALLOWED_RUNTIMES = {"openclaw", "hermes"}
 EXPANDED_CWD_PLACEHOLDERS = ("${PLUGIN_ROOT}", "${PLUGIN_DATA}")
+MAX_MCP_SERVERS = 1_000
+MAX_MCP_SERVER_NAME_LENGTH = 256
+
+
+def has_ascii_control(value: str) -> bool:
+    """Return whether a catalog-facing string contains ASCII controls or DEL."""
+
+    return any(ord(character) < 0x20 or ord(character) == 0x7F for character in value)
 
 
 class DuplicateKeyError(ValueError):
@@ -97,6 +105,9 @@ class PluginReport:
     digest: str | None = None
     valid_skills: int = 0
     valid_servers: int = 0
+    manifest: dict[str, Any] | None = field(default=None, repr=False)
+    skills: list[str] = field(default_factory=list)
+    mcp_servers: dict[str, str] = field(default_factory=dict)
 
 
 def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -132,6 +143,7 @@ class Validator:
         self.root = root
         self.repository_root = repository_root
         self.errors: list[str] = []
+        self.skill_names: list[str] = []
         self.server_types: dict[str, str] = {}
         self.configured_targets: dict[str, dict[str, set[str]]] = {}
         self.bare_commands: set[str] = set()
@@ -169,6 +181,7 @@ class Validator:
         *,
         required: bool = False,
         maximum: int | None = None,
+        catalog_facing: bool = False,
     ) -> str | None:
         if not isinstance(value, str):
             self.error(path, f"{field_name} must be a string")
@@ -178,6 +191,9 @@ class Validator:
             return None
         if maximum is not None and len(value) > maximum:
             self.error(path, f"{field_name} exceeds {maximum} characters")
+            return None
+        if catalog_facing and has_ascii_control(value):
+            self.error(path, f"{field_name} contains ASCII control characters or DEL")
             return None
         return value
 
@@ -266,7 +282,15 @@ class Validator:
             self.error(path, "version must be exact Semantic Versioning")
         for field_name in ("description", "homepage", "repository", "license"):
             if field_name in manifest:
-                self.string(path, manifest[field_name], field_name)
+                maximum = 512 if field_name == "description" else None
+                self.string(
+                    path,
+                    manifest[field_name],
+                    field_name,
+                    required=field_name == "description",
+                    maximum=maximum,
+                    catalog_facing=field_name == "description",
+                )
         if "author" in manifest:
             author = manifest["author"]
             if not isinstance(author, dict):
@@ -274,11 +298,22 @@ class Validator:
             else:
                 self.closed(path, author, AUTHOR_FIELDS)
                 for field_name, value in author.items():
-                    self.string(path, value, f"author.{field_name}")
-        if "keywords" in manifest:
-            keywords = manifest["keywords"]
-            if not isinstance(keywords, list) or any(not isinstance(item, str) for item in keywords):
-                self.error(path, "keywords must be an array of strings")
+                    maximum = 80 if field_name == "name" else None
+                    self.string(
+                        path,
+                        value,
+                        f"author.{field_name}",
+                        required=field_name == "name",
+                        maximum=maximum,
+                        catalog_facing=field_name == "name",
+                    )
+        self.string_array(
+            path,
+            manifest.get("keywords"),
+            "keywords",
+            maximum_items=20,
+            maximum_length=32,
+        )
         extensions = manifest.get("extensions")
         if not isinstance(extensions, dict):
             self.error(path, "extensions must be an object containing ai.clawdi")
@@ -328,6 +363,7 @@ class Validator:
                 self.error(skill_md, message)
             if len(self.errors) == before:
                 valid += 1
+                self.skill_names.append(entry.name)
         return valid
 
     def stdio(self, path: Path, name: str, server: dict[str, Any]) -> None:
@@ -472,10 +508,20 @@ class Validator:
         if not isinstance(servers, dict):
             self.error(path, "mcpServers is required and must be an object")
             return 0
+        if len(servers) > MAX_MCP_SERVERS:
+            self.error(path, f"mcpServers exceeds {MAX_MCP_SERVERS} entries")
+            return 0
         valid = 0
         for name, server in servers.items():
             server_path = path
             before = len(self.errors)
+            if not name or len(name) > MAX_MCP_SERVER_NAME_LENGTH or has_ascii_control(name):
+                self.error(
+                    server_path,
+                    f"{self.server_context(name)} name must contain 1-{MAX_MCP_SERVER_NAME_LENGTH} "
+                    "characters and no ASCII controls or DEL",
+                )
+                continue
             if not isinstance(server, dict):
                 self.error(server_path, f"{self.server_context(name)} must be an object")
                 continue
@@ -521,11 +567,17 @@ class Validator:
             self.error(path, "extensions.ai.clawdi.display is required and must be an object")
         else:
             self.closed(path, display, DISPLAY_FIELDS)
-            self.string(path, display.get("name"), "display.name", required=True, maximum=80)
+            self.string(
+                path,
+                display.get("name"),
+                "display.name",
+                required=True,
+                maximum=80,
+                catalog_facing=True,
+            )
             category = self.string(path, display.get("category"), "display.category", required=True, maximum=64)
             if category is not None and not CATEGORY_RE.fullmatch(category):
                 self.error(path, "display.category must be a lowercase slug")
-            self.string_array(path, display.get("tags"), "display.tags", maximum_items=20, maximum_length=32)
             languages = self.string_array(
                 path, display.get("languages"), "display.languages", maximum_items=20, maximum_length=64
             )
@@ -607,7 +659,11 @@ class Validator:
             self.error(path, f"{field_name} must contain at least {minimum_items} item(s)")
             return None
         invalid_item = any(
-            not isinstance(item, str) or not item or len(item) > maximum_length for item in value
+            not isinstance(item, str)
+            or not item
+            or len(item) > maximum_length
+            or has_ascii_control(item)
+            for item in value
         )
         if len(value) > maximum_items or invalid_item:
             self.error(path, f"{field_name} contains invalid or too many strings")
@@ -737,4 +793,13 @@ def validate_plugin(root: Path, repository_root: Path) -> PluginReport:
             digest = compute_package_digest(root)
         except (OSError, PackageValidationError) as exc:
             validator.error(root, f"cannot compute sha256-tree-v1 digest: {exc}")
-    return PluginReport(root.name, validator.errors, digest, valid_skills, valid_servers)
+    return PluginReport(
+        key=root.name,
+        errors=validator.errors,
+        digest=digest,
+        valid_skills=valid_skills,
+        valid_servers=valid_servers,
+        manifest=manifest if not validator.errors else None,
+        skills=validator.skill_names if not validator.errors else [],
+        mcp_servers=dict(validator.server_types) if not validator.errors else {},
+    )

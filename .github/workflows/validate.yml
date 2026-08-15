@@ -22,3 +22,14 @@ jobs:
         run: python -m unittest discover -s v2/tests -v
       - name: Validate Agent v2 Store
         run: python v2/scripts/validate.py
+      - name: Enforce published Agent v2 package immutability
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -eu
+          baseline="$RUNNER_TEMP/v2-baseline-catalog.json"
+          git fetch --no-tags --depth=1 origin "$BASE_SHA"
+          if git cat-file -e "${BASE_SHA}:v2/catalog.json" 2>/dev/null; then
+            git show "${BASE_SHA}:v2/catalog.json" > "$baseline"
+            python v2/scripts/catalog.py --check-baseline "$baseline"
+          fi

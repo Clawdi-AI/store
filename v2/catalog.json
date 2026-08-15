@@ -1,0 +1,37 @@
+{
+  "plugins": [
+    {
+      "category": "productivity",
+      "components": {
+        "mcpServers": {
+          "clawdi": "streamable-http"
+        },
+        "skills": [
+          "clawdi"
+        ]
+      },
+      "description": "Clawdi Cloud memory, session, project, Vault metadata, and connected-service tools.",
+      "digest": "sha256-tree-v1:6a9c13c187de7f8a2b9e59e3a9e1ef25b39e07ad6687f92d2d6dcaf2c12a27d3",
+      "displayName": "Clawdi",
+      "hasConfiguration": false,
+      "keywords": [
+        "clawdi",
+        "memory",
+        "sessions",
+        "connectors"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "clawdi",
+      "path": "./plugins/clawdi",
+      "publisher": "Clawdi",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "version": "1.0.0"
+    }
+  ],
+  "schemaVersion": 1
+}

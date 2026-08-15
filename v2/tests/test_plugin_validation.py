@@ -55,13 +55,13 @@ def make_plugin(parent: Path) -> Path:
             "name": "example-plugin",
             "version": "1.2.3-beta.1+build.4",
             "description": "Example package",
+            "keywords": ["reports", "summary"],
             "extensions": {
                 "ai.clawdi": {
                     "schemaVersion": 1,
                     "display": {
                         "name": "Example Plugin",
                         "category": "productivity",
-                        "tags": ["reports", "summary"],
                         "languages": ["en", "zh-CN"],
                     },
                     "configuration": {
@@ -143,7 +143,10 @@ class PluginValidationTests(unittest.TestCase):
 
             report = validate_plugin(root, Path(temporary))
             self.assertEqual(1, len(report.errors))
-            self.assertIn('mcpServers["invalid\\nname"].type is unsupported', report.errors[0])
+            self.assertIn(
+                "name must contain 1-256 characters and no ASCII controls or DEL",
+                report.errors[0],
+            )
             self.assertEqual(3, report.valid_servers)
 
             del document["mcpServers"]["invalid\nname"]
