@@ -9,6 +9,14 @@ original content in this repository is licensed under the MIT License.
 Third-party bundled assets
 --------------------------
 
+v2/schemas/agent-plugins/1.0.0/plugin.schema.json
+v2/schemas/agent-plugins/1.0.0/mcp.schema.json
+- Project: Agent Plugins Specification
+- Version: 1.0.0
+- License: Apache License 2.0
+- License text: v2/schemas/agent-plugins/LICENSE
+- Source: https://github.com/agentplugins/agent-plugins-spec
+
 agents/ceo-agent/skills/markmap-mindmap-export/assets/d3.v7.min.js
 - Project: D3.js
 - Version: 7.9.0
