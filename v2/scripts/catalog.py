@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 import stat
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any, Iterable
 
 if __package__:
@@ -130,6 +130,19 @@ def render_catalog(catalog: dict[str, Any]) -> bytes:
     """Serialize a catalog to its canonical checked-in representation."""
 
     return (json.dumps(catalog, indent=2, sort_keys=True, ensure_ascii=True) + "\n").encode("utf-8")
+
+
+def _semver_key(version: str) -> tuple[object, ...]:
+    without_build = version.split("+", 1)[0]
+    core, separator, prerelease = without_build.partition("-")
+    major, minor, patch = (int(value) for value in core.split("."))
+    if not separator:
+        return (major, minor, patch, 1, ())
+    identifiers = tuple(
+        (0, int(value)) if value.isdigit() else (1, value)
+        for value in prerelease.split(".")
+    )
+    return (major, minor, patch, 0, identifiers)
 
 
 def _string_array(
@@ -305,12 +318,11 @@ def validate_catalog(catalog: Any) -> list[str]:
         if isinstance(icon, str):
             prefix = f"./plugins/{name}/"
             suffix = icon[len(prefix) :] if icon.startswith(prefix) else ""
-            parts = PurePosixPath(suffix).parts
             if (
                 not suffix
                 or "\\" in icon
                 or suffix.startswith("/")
-                or any(part in {"", ".", ".."} for part in parts)
+                or any(part in {"", ".", ".."} for part in suffix.split("/"))
                 or has_ascii_control(icon)
             ):
                 errors.append(f"{context}.icon must remain within its plugin path")
@@ -366,13 +378,20 @@ def check_version_immutability(current: Any, baseline: Any) -> list[str]:
     errors.extend(f"baseline: {error}" for error in validate_catalog(baseline))
     if errors:
         return errors
-    baseline_digests = {
-        (entry["name"], entry["version"]): entry["digest"] for entry in baseline["plugins"]
-    }
+    baseline_entries = {entry["name"]: entry for entry in baseline["plugins"]}
     for entry in current["plugins"]:
-        identity = (entry["name"], entry["version"])
-        old_digest = baseline_digests.get(identity)
-        if old_digest is not None and old_digest != entry["digest"]:
+        old_entry = baseline_entries.get(entry["name"])
+        if old_entry is None:
+            continue
+        if (
+            entry["version"] != old_entry["version"]
+            and _semver_key(entry["version"]) <= _semver_key(old_entry["version"])
+        ):
+            errors.append(
+                f"{entry['name']} version did not increase from "
+                f"{old_entry['version']} to {entry['version']}"
+            )
+        elif entry["version"] == old_entry["version"] and entry["digest"] != old_entry["digest"]:
             errors.append(
                 f"{entry['name']}@{entry['version']} changed digest; publish changed bytes with a new version"
             )

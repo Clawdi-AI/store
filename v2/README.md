@@ -129,8 +129,8 @@ multi-version registry. Existing installs remain pinned to their original
 commit and digest after a newer version replaces the listing.
 
 CI rejects generated-file drift. Its separate baseline check also rejects a
-changed digest for a `name` and `version` already present in the baseline
-catalog; changed package bytes require a new version.
+version regression or a changed digest for a `name` and `version` already
+present in the baseline catalog; changed package bytes require a newer version.
 
 ## Validation and digest
 

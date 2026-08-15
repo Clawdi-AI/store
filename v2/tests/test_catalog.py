@@ -104,6 +104,18 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("alpha@1.0.0 changed digest", "\n".join(errors))
         bumped = generate_catalog([make_report("alpha", "b" * 64, version="1.0.1")])
         self.assertEqual([], check_version_immutability(bumped, baseline))
+        regressed = generate_catalog([make_report("alpha", "b" * 64, version="0.9.0")])
+        self.assertIn(
+            "alpha version did not increase",
+            "\n".join(check_version_immutability(regressed, baseline)),
+        )
+        build_only = generate_catalog(
+            [make_report("alpha", "b" * 64, version="1.0.0+build.2")]
+        )
+        self.assertIn(
+            "alpha version did not increase",
+            "\n".join(check_version_immutability(build_only, baseline)),
+        )
 
     def test_clawdi_rename_marker_and_digest(self) -> None:
         report = validate_store()
