@@ -82,6 +82,9 @@ class CatalogTests(unittest.TestCase):
         invalid["plugins"][0]["keywords"] = ["alpha"]
         invalid["plugins"][0]["components"]["details"] = {}
         self.assertIn("plugins[0].components has unknown field: details", validate_catalog(invalid))
+        invalid["plugins"][0]["components"].pop("details")
+        invalid["plugins"][0]["components"]["mcpServers"] = {"x" * 257: "stdio"}
+        self.assertIn("1-256 characters", "\n".join(validate_catalog(invalid)))
 
         with tempfile.TemporaryDirectory(prefix=".store-catalog-test-", dir=V2_ROOT) as temporary:
             path = Path(temporary) / "catalog.json"

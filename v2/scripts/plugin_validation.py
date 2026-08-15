@@ -84,6 +84,8 @@ SENSITIVE_HEADERS = {
 }
 ALLOWED_RUNTIMES = {"openclaw", "hermes"}
 EXPANDED_CWD_PLACEHOLDERS = ("${PLUGIN_ROOT}", "${PLUGIN_DATA}")
+MAX_MCP_SERVERS = 1_000
+MAX_MCP_SERVER_NAME_LENGTH = 256
 
 
 def has_ascii_control(value: str) -> bool:
@@ -506,14 +508,18 @@ class Validator:
         if not isinstance(servers, dict):
             self.error(path, "mcpServers is required and must be an object")
             return 0
+        if len(servers) > MAX_MCP_SERVERS:
+            self.error(path, f"mcpServers exceeds {MAX_MCP_SERVERS} entries")
+            return 0
         valid = 0
         for name, server in servers.items():
             server_path = path
             before = len(self.errors)
-            if not name or has_ascii_control(name):
+            if not name or len(name) > MAX_MCP_SERVER_NAME_LENGTH or has_ascii_control(name):
                 self.error(
                     server_path,
-                    f"{self.server_context(name)} name must be non-empty and contain no ASCII controls or DEL",
+                    f"{self.server_context(name)} name must contain 1-{MAX_MCP_SERVER_NAME_LENGTH} "
+                    "characters and no ASCII controls or DEL",
                 )
                 continue
             if not isinstance(server, dict):

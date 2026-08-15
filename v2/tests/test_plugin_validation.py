@@ -143,7 +143,10 @@ class PluginValidationTests(unittest.TestCase):
 
             report = validate_plugin(root, Path(temporary))
             self.assertEqual(1, len(report.errors))
-            self.assertIn("name must be non-empty and contain no ASCII controls or DEL", report.errors[0])
+            self.assertIn(
+                "name must contain 1-256 characters and no ASCII controls or DEL",
+                report.errors[0],
+            )
             self.assertEqual(3, report.valid_servers)
 
             del document["mcpServers"]["invalid\nname"]

@@ -15,6 +15,8 @@ if __package__:
         ALLOWED_RUNTIMES,
         CATEGORY_RE,
         LANGUAGE_RE,
+        MAX_MCP_SERVERS,
+        MAX_MCP_SERVER_NAME_LENGTH,
         PLUGIN_NAME_RE,
         SEMVER_RE,
         PluginReport,
@@ -25,6 +27,8 @@ else:
         ALLOWED_RUNTIMES,
         CATEGORY_RE,
         LANGUAGE_RE,
+        MAX_MCP_SERVERS,
+        MAX_MCP_SERVER_NAME_LENGTH,
         PLUGIN_NAME_RE,
         SEMVER_RE,
         PluginReport,
@@ -272,15 +276,20 @@ def validate_catalog(catalog: Any) -> list[str]:
             if not isinstance(servers, dict):
                 errors.append(f"{context}.components.mcpServers must be an object")
             else:
+                if len(servers) > MAX_MCP_SERVERS:
+                    errors.append(
+                        f"{context}.components.mcpServers exceeds {MAX_MCP_SERVERS} entries"
+                    )
                 for server_name, transport in servers.items():
                     if (
                         not isinstance(server_name, str)
                         or not server_name
+                        or len(server_name) > MAX_MCP_SERVER_NAME_LENGTH
                         or has_ascii_control(server_name)
                     ):
                         errors.append(
-                            f"{context}.components.mcpServers names must be non-empty "
-                            "and contain no ASCII controls or DEL"
+                            f"{context}.components.mcpServers names must contain "
+                            f"1-{MAX_MCP_SERVER_NAME_LENGTH} characters and no ASCII controls or DEL"
                         )
                     if not isinstance(transport, str) or transport not in MCP_TRANSPORTS:
                         errors.append(
