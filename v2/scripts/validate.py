@@ -9,9 +9,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 if __package__:
+    from .catalog import CATALOG_PATH, check_catalog, generate_catalog
     from .plugin_package import escape_path
     from .plugin_validation import PluginReport, validate_plugin
 else:
+    from catalog import CATALOG_PATH, check_catalog, generate_catalog
     from plugin_package import escape_path
     from plugin_validation import PluginReport, validate_plugin
 
@@ -98,6 +100,10 @@ def main() -> int:
             print(f"OK {plugin.key} sha256-tree-v1:{plugin.digest}")
 
     error_count = len(report.errors) + sum(len(plugin.errors) for plugin in report.plugins)
+    if not error_count:
+        for message in check_catalog(CATALOG_PATH, generate_catalog(report.plugins)):
+            print(f"ERROR v2/catalog.json: {message}")
+            error_count += 1
     if error_count:
         print(f"Agent v2 Store validation failed with {error_count} error(s).")
         return 1

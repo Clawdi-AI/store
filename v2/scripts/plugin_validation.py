@@ -46,7 +46,7 @@ PLUGIN_FIELDS = {
 }
 AUTHOR_FIELDS = {"name", "email", "url"}
 CLAWDI_FIELDS = {"schemaVersion", "display", "configuration", "compatibility"}
-DISPLAY_FIELDS = {"name", "icon", "category", "tags", "languages"}
+DISPLAY_FIELDS = {"name", "icon", "category", "languages"}
 CONFIGURATION_FIELDS = {"secretSlots"}
 SLOT_FIELDS = {"label", "description", "required", "bindings"}
 BINDING_FIELDS = {"server", "target", "name", "prefix"}
@@ -97,6 +97,7 @@ class PluginReport:
     digest: str | None = None
     valid_skills: int = 0
     valid_servers: int = 0
+    manifest: dict[str, Any] | None = field(default=None, repr=False)
 
 
 def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -266,7 +267,14 @@ class Validator:
             self.error(path, "version must be exact Semantic Versioning")
         for field_name in ("description", "homepage", "repository", "license"):
             if field_name in manifest:
-                self.string(path, manifest[field_name], field_name)
+                maximum = 512 if field_name == "description" else None
+                self.string(
+                    path,
+                    manifest[field_name],
+                    field_name,
+                    required=field_name == "description",
+                    maximum=maximum,
+                )
         if "author" in manifest:
             author = manifest["author"]
             if not isinstance(author, dict):
@@ -274,11 +282,21 @@ class Validator:
             else:
                 self.closed(path, author, AUTHOR_FIELDS)
                 for field_name, value in author.items():
-                    self.string(path, value, f"author.{field_name}")
-        if "keywords" in manifest:
-            keywords = manifest["keywords"]
-            if not isinstance(keywords, list) or any(not isinstance(item, str) for item in keywords):
-                self.error(path, "keywords must be an array of strings")
+                    maximum = 80 if field_name == "name" else None
+                    self.string(
+                        path,
+                        value,
+                        f"author.{field_name}",
+                        required=field_name == "name",
+                        maximum=maximum,
+                    )
+        self.string_array(
+            path,
+            manifest.get("keywords"),
+            "keywords",
+            maximum_items=20,
+            maximum_length=32,
+        )
         extensions = manifest.get("extensions")
         if not isinstance(extensions, dict):
             self.error(path, "extensions must be an object containing ai.clawdi")
@@ -525,7 +543,6 @@ class Validator:
             category = self.string(path, display.get("category"), "display.category", required=True, maximum=64)
             if category is not None and not CATEGORY_RE.fullmatch(category):
                 self.error(path, "display.category must be a lowercase slug")
-            self.string_array(path, display.get("tags"), "display.tags", maximum_items=20, maximum_length=32)
             languages = self.string_array(
                 path, display.get("languages"), "display.languages", maximum_items=20, maximum_length=64
             )
@@ -737,4 +754,11 @@ def validate_plugin(root: Path, repository_root: Path) -> PluginReport:
             digest = compute_package_digest(root)
         except (OSError, PackageValidationError) as exc:
             validator.error(root, f"cannot compute sha256-tree-v1 digest: {exc}")
-    return PluginReport(root.name, validator.errors, digest, valid_skills, valid_servers)
+    return PluginReport(
+        key=root.name,
+        errors=validator.errors,
+        digest=digest,
+        valid_skills=valid_skills,
+        valid_servers=valid_servers,
+        manifest=manifest if not validator.errors else None,
+    )

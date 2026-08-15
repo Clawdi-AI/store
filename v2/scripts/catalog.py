@@ -1,0 +1,375 @@
+#!/usr/bin/env python3
+"""Generate and validate the thin Clawdi Store v2 catalog."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import stat
+from pathlib import Path, PurePosixPath
+from typing import Any, Iterable
+
+if __package__:
+    from .plugin_validation import (
+        ALLOWED_RUNTIMES,
+        CATEGORY_RE,
+        LANGUAGE_RE,
+        PLUGIN_NAME_RE,
+        SEMVER_RE,
+        PluginReport,
+    )
+else:
+    from plugin_validation import (
+        ALLOWED_RUNTIMES,
+        CATEGORY_RE,
+        LANGUAGE_RE,
+        PLUGIN_NAME_RE,
+        SEMVER_RE,
+        PluginReport,
+    )
+
+V2_ROOT = Path(__file__).resolve().parent.parent
+REPOSITORY_ROOT = V2_ROOT.parent
+CATALOG_PATH = V2_ROOT / "catalog.json"
+CATALOG_SCHEMA_VERSION = 1
+DIGEST_PREFIX = "sha256-tree-v1:"
+DIGEST_RE = re.compile(r"^sha256-tree-v1:[0-9a-f]{64}$")
+
+CATALOG_FIELDS = {"schemaVersion", "plugins"}
+ENTRY_FIELDS = {
+    "name",
+    "version",
+    "displayName",
+    "description",
+    "publisher",
+    "category",
+    "keywords",
+    "languages",
+    "runtimes",
+    "hasConfiguration",
+    "icon",
+    "path",
+    "digest",
+}
+REQUIRED_ENTRY_FIELDS = {
+    "name",
+    "version",
+    "displayName",
+    "category",
+    "keywords",
+    "languages",
+    "runtimes",
+    "hasConfiguration",
+    "path",
+    "digest",
+}
+
+
+class CatalogError(ValueError):
+    """Raised when a catalog cannot be generated or loaded safely."""
+
+
+def _catalog_entry(report: PluginReport) -> dict[str, Any]:
+    if report.errors or report.digest is None or report.manifest is None:
+        raise CatalogError(f"plugin {report.key!r} has not passed package validation")
+
+    manifest = report.manifest
+    extension = manifest["extensions"]["ai.clawdi"]
+    display = extension["display"]
+    compatibility = extension.get("compatibility", {})
+    entry: dict[str, Any] = {
+        "name": manifest["name"],
+        "version": manifest["version"],
+        "displayName": display["name"],
+        "category": display["category"],
+        "keywords": list(manifest["keywords"]),
+        "languages": list(display["languages"]),
+        "runtimes": list(compatibility.get("runtimes", [])),
+        "hasConfiguration": "configuration" in extension,
+        "path": f"./plugins/{report.key}",
+        "digest": f"{DIGEST_PREFIX}{report.digest}",
+    }
+    if "description" in manifest:
+        entry["description"] = manifest["description"]
+    author = manifest.get("author")
+    if isinstance(author, dict) and "name" in author:
+        entry["publisher"] = author["name"]
+    if "icon" in display:
+        entry["icon"] = f"./plugins/{report.key}/{display['icon'][2:]}"
+    return entry
+
+
+def generate_catalog(reports: Iterable[PluginReport]) -> dict[str, Any]:
+    """Build a deterministic catalog from already-validated plugin reports."""
+
+    entries = [_catalog_entry(report) for report in reports]
+    entries.sort(key=lambda entry: entry["name"].encode("utf-8"))
+    catalog = {"schemaVersion": CATALOG_SCHEMA_VERSION, "plugins": entries}
+    errors = validate_catalog(catalog)
+    if errors:
+        raise CatalogError("generated invalid catalog: " + "; ".join(errors))
+    return catalog
+
+
+def render_catalog(catalog: dict[str, Any]) -> bytes:
+    """Serialize a catalog to its canonical checked-in representation."""
+
+    return (json.dumps(catalog, indent=2, sort_keys=True, ensure_ascii=True) + "\n").encode("utf-8")
+
+
+def _string_array(
+    errors: list[str],
+    value: Any,
+    field: str,
+    *,
+    maximum_items: int,
+    maximum_length: int,
+) -> None:
+    if not isinstance(value, list):
+        errors.append(f"{field} must be an array")
+        return
+    if len(value) > maximum_items or any(
+        not isinstance(item, str) or not item or len(item) > maximum_length for item in value
+    ):
+        errors.append(f"{field} contains invalid or too many strings")
+        return
+    folded = [item.casefold() for item in value]
+    if len(folded) != len(set(folded)):
+        errors.append(f"{field} must not contain case-folded duplicates")
+
+
+def validate_catalog(catalog: Any) -> list[str]:
+    """Validate the closed Clawdi Store catalog v1 contract."""
+
+    if not isinstance(catalog, dict):
+        return ["catalog must be an object"]
+    errors: list[str] = []
+    for field in sorted(catalog.keys() - CATALOG_FIELDS):
+        errors.append(f"unknown catalog field: {field}")
+    if (
+        type(catalog.get("schemaVersion")) is not int
+        or catalog.get("schemaVersion") != CATALOG_SCHEMA_VERSION
+    ):
+        errors.append(f"schemaVersion must equal {CATALOG_SCHEMA_VERSION}")
+    plugins = catalog.get("plugins")
+    if not isinstance(plugins, list):
+        errors.append("plugins must be an array")
+        return errors
+    if len(plugins) > 10_000:
+        errors.append("plugins exceeds 10000 entries")
+        return errors
+
+    names: set[str] = set()
+    folded_names: set[str] = set()
+    ordered_names: list[str] = []
+    for index, entry in enumerate(plugins):
+        context = f"plugins[{index}]"
+        if not isinstance(entry, dict):
+            errors.append(f"{context} must be an object")
+            continue
+        for field in sorted(entry.keys() - ENTRY_FIELDS):
+            errors.append(f"{context} has unknown field: {field}")
+        for field in sorted(REQUIRED_ENTRY_FIELDS - entry.keys()):
+            errors.append(f"{context} is missing field: {field}")
+
+        name = entry.get("name")
+        if not isinstance(name, str) or not PLUGIN_NAME_RE.fullmatch(name):
+            errors.append(f"{context}.name is invalid")
+            continue
+        ordered_names.append(name)
+        if name in names or name.casefold() in folded_names:
+            errors.append(f"{context}.name duplicates another plugin")
+        names.add(name)
+        folded_names.add(name.casefold())
+
+        version = entry.get("version")
+        if not isinstance(version, str) or not SEMVER_RE.fullmatch(version):
+            errors.append(f"{context}.version must be an exact Semantic Version")
+        for field, maximum in (
+            ("displayName", 80),
+            ("description", 512),
+            ("publisher", 80),
+            ("category", 64),
+            ("icon", 1024),
+        ):
+            if field in entry and (
+                not isinstance(entry[field], str) or not entry[field] or len(entry[field]) > maximum
+            ):
+                errors.append(f"{context}.{field} must be a non-empty string of at most {maximum} characters")
+        category = entry.get("category")
+        if isinstance(category, str) and not CATEGORY_RE.fullmatch(category):
+            errors.append(f"{context}.category must be a lowercase slug")
+        _string_array(
+            errors,
+            entry.get("keywords"),
+            f"{context}.keywords",
+            maximum_items=20,
+            maximum_length=32,
+        )
+        _string_array(
+            errors,
+            entry.get("languages"),
+            f"{context}.languages",
+            maximum_items=20,
+            maximum_length=64,
+        )
+        _string_array(
+            errors,
+            entry.get("runtimes"),
+            f"{context}.runtimes",
+            maximum_items=2,
+            maximum_length=16,
+        )
+        languages = entry.get("languages")
+        if isinstance(languages, list):
+            for language in languages:
+                if isinstance(language, str) and not LANGUAGE_RE.fullmatch(language):
+                    errors.append(f"{context}.languages contains invalid tag: {language}")
+        runtimes = entry.get("runtimes")
+        if isinstance(runtimes, list):
+            unknown_runtimes = {
+                runtime for runtime in runtimes if isinstance(runtime, str)
+            } - ALLOWED_RUNTIMES
+            if unknown_runtimes:
+                errors.append(
+                    f"{context}.runtimes contains unsupported values: "
+                    + ", ".join(sorted(unknown_runtimes))
+                )
+        if type(entry.get("hasConfiguration")) is not bool:
+            errors.append(f"{context}.hasConfiguration must be a boolean")
+        if entry.get("path") != f"./plugins/{name}":
+            errors.append(f"{context}.path must equal ./plugins/{name}")
+        if not isinstance(entry.get("digest"), str) or not DIGEST_RE.fullmatch(entry["digest"]):
+            errors.append(f"{context}.digest must be a sha256-tree-v1 digest")
+        icon = entry.get("icon")
+        if isinstance(icon, str):
+            prefix = f"./plugins/{name}/"
+            suffix = icon[len(prefix) :] if icon.startswith(prefix) else ""
+            parts = PurePosixPath(suffix).parts
+            if (
+                not suffix
+                or "\\" in icon
+                or suffix.startswith("/")
+                or any(part in {"", ".", ".."} for part in parts)
+                or any(ord(character) < 0x20 or ord(character) == 0x7F for character in icon)
+            ):
+                errors.append(f"{context}.icon must remain within its plugin path")
+
+    if ordered_names != sorted(ordered_names, key=lambda name: name.encode("utf-8")):
+        errors.append("plugins must be sorted by UTF-8 bytes of name")
+    return errors
+
+
+def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        if key in value:
+            raise CatalogError(f"duplicate JSON key: {key}")
+        value[key] = item
+    return value
+
+
+def load_catalog(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
+    """Load a regular UTF-8 catalog file and validate its closed contract."""
+
+    try:
+        if not stat.S_ISREG(path.lstat().st_mode):
+            return None, ["catalog must be a regular file"]
+        catalog = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_json_object)
+    except (OSError, UnicodeError, json.JSONDecodeError, CatalogError, ValueError) as exc:
+        return None, [f"invalid catalog JSON: {exc}"]
+    errors = validate_catalog(catalog)
+    return (catalog if isinstance(catalog, dict) else None), errors
+
+
+def check_catalog(path: Path, expected: dict[str, Any]) -> list[str]:
+    """Reject invalid, non-canonical, or generated catalog drift."""
+
+    catalog, errors = load_catalog(path)
+    if errors or catalog is None:
+        return errors
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        return [f"cannot read catalog: {exc}"]
+    if content != render_catalog(catalog):
+        return ["catalog JSON is not in canonical generated form"]
+    if content != render_catalog(expected):
+        return ["catalog is stale; run python3 v2/scripts/catalog.py --write"]
+    return []
+
+
+def check_version_immutability(current: Any, baseline: Any) -> list[str]:
+    """Reject changed bytes for a name and version present in the baseline."""
+
+    errors = [f"current: {error}" for error in validate_catalog(current)]
+    errors.extend(f"baseline: {error}" for error in validate_catalog(baseline))
+    if errors:
+        return errors
+    baseline_digests = {
+        (entry["name"], entry["version"]): entry["digest"] for entry in baseline["plugins"]
+    }
+    for entry in current["plugins"]:
+        identity = (entry["name"], entry["version"])
+        old_digest = baseline_digests.get(identity)
+        if old_digest is not None and old_digest != entry["digest"]:
+            errors.append(
+                f"{entry['name']}@{entry['version']} changed digest; publish changed bytes with a new version"
+            )
+    return errors
+
+
+def _print_store_errors(report: Any) -> int:
+    messages = list(report.errors)
+    for plugin in report.plugins:
+        messages.extend(plugin.errors)
+    for message in messages:
+        print(f"ERROR {message}")
+    return len(messages)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--write", action="store_true", help="write the generated catalog")
+    action.add_argument("--check", action="store_true", help="check the generated catalog")
+    action.add_argument("--check-baseline", type=Path, metavar="PATH", help="check version immutability")
+    args = parser.parse_args()
+
+    if args.check_baseline is not None:
+        current, current_errors = load_catalog(CATALOG_PATH)
+        baseline, baseline_errors = load_catalog(args.check_baseline)
+        errors = [f"current: {error}" for error in current_errors]
+        errors.extend(f"baseline: {error}" for error in baseline_errors)
+        if not errors and current is not None and baseline is not None:
+            errors.extend(check_version_immutability(current, baseline))
+        for error in errors:
+            print(f"ERROR {error}")
+        return 1 if errors else 0
+
+    if __package__:
+        from .validate import validate_store
+    else:
+        from validate import validate_store
+
+    report = validate_store()
+    if _print_store_errors(report):
+        return 1
+    catalog = generate_catalog(report.plugins)
+    if args.write:
+        try:
+            CATALOG_PATH.write_bytes(render_catalog(catalog))
+        except OSError as exc:
+            print(f"ERROR cannot write {CATALOG_PATH.relative_to(REPOSITORY_ROOT)}: {exc}")
+            return 1
+        print(f"Wrote {CATALOG_PATH.relative_to(REPOSITORY_ROOT)}")
+        return 0
+    errors = check_catalog(CATALOG_PATH, catalog)
+    for error in errors:
+        print(f"ERROR {error}")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

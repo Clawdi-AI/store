@@ -55,13 +55,13 @@ def make_plugin(parent: Path) -> Path:
             "name": "example-plugin",
             "version": "1.2.3-beta.1+build.4",
             "description": "Example package",
+            "keywords": ["reports", "summary"],
             "extensions": {
                 "ai.clawdi": {
                     "schemaVersion": 1,
                     "display": {
                         "name": "Example Plugin",
                         "category": "productivity",
-                        "tags": ["reports", "summary"],
                         "languages": ["en", "zh-CN"],
                     },
                     "configuration": {
