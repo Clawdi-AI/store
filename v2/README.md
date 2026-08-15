@@ -107,17 +107,26 @@ python3 v2/scripts/catalog.py --write
 The closed `schemaVersion: 1` entry is a normalized listing and resolution
 projection. It contains package `name` and `version`; `displayName`, optional
 `description` and `publisher`, `category`, standard `keywords`, and `languages`;
-declared `runtimes`; package-relative `path` and optional `icon`; the
-`sha256-tree-v1` `digest`; and `hasConfiguration`. The last field is derived
-only from the presence of `extensions["ai.clawdi"].configuration`; it never
-copies secret slot bindings or values. The current Clawdi native adapter must
-not offer entries with `hasConfiguration: true` until it supports that object.
+declared `runtimes`; `path` and optional `icon`; the `sha256-tree-v1` `digest`;
+`hasConfiguration`; and a closed `components` summary. `components.skills`
+contains exact Skill names, while `components.mcpServers` maps exact server
+names to declared `stdio`, `streamable-http`, or `sse` transports. It contains
+no Skill bodies or descriptions and no MCP URLs, headers, commands, or config
+bindings. Catalog-facing human strings and array items cannot contain ASCII
+control characters or DEL.
 
-The index contains no Git commit. A consumer resolves an external Store commit,
-reads `path` within that snapshot, verifies `digest`, and binds the install to
-that commit plus digest. The index exposes one current published version per
-plugin; it is not a multi-version registry. Existing installs remain pinned to
-their original commit and digest after a newer version replaces the listing.
+`hasConfiguration` is derived only from the presence of
+`extensions["ai.clawdi"].configuration`; it never copies secret slot bindings
+or values. The current Clawdi native adapter must not offer entries with
+`hasConfiguration: true` until it supports that object.
+
+The index contains no Git commit. `path` is resolved relative to the directory
+containing `v2/catalog.json`, so `./plugins/clawdi` selects
+`v2/plugins/clawdi` in the same snapshot. A consumer resolves an external Store
+commit, verifies `digest`, and binds the install to that commit plus digest. The
+index exposes one current published version per plugin; it is not a
+multi-version registry. Existing installs remain pinned to their original
+commit and digest after a newer version replaces the listing.
 
 CI rejects generated-file drift. Its separate baseline check also rejects a
 changed digest for a `name` and `version` already present in the baseline

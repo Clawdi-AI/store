@@ -18,6 +18,7 @@ if __package__:
         PLUGIN_NAME_RE,
         SEMVER_RE,
         PluginReport,
+        has_ascii_control,
     )
 else:
     from plugin_validation import (
@@ -27,6 +28,7 @@ else:
         PLUGIN_NAME_RE,
         SEMVER_RE,
         PluginReport,
+        has_ascii_control,
     )
 
 V2_ROOT = Path(__file__).resolve().parent.parent
@@ -51,6 +53,7 @@ ENTRY_FIELDS = {
     "icon",
     "path",
     "digest",
+    "components",
 }
 REQUIRED_ENTRY_FIELDS = {
     "name",
@@ -63,7 +66,10 @@ REQUIRED_ENTRY_FIELDS = {
     "hasConfiguration",
     "path",
     "digest",
+    "components",
 }
+COMPONENT_FIELDS = {"skills", "mcpServers"}
+MCP_TRANSPORTS = {"stdio", "streamable-http", "sse"}
 
 
 class CatalogError(ValueError):
@@ -89,6 +95,10 @@ def _catalog_entry(report: PluginReport) -> dict[str, Any]:
         "hasConfiguration": "configuration" in extension,
         "path": f"./plugins/{report.key}",
         "digest": f"{DIGEST_PREFIX}{report.digest}",
+        "components": {
+            "skills": list(report.skills),
+            "mcpServers": dict(report.mcp_servers),
+        },
     }
     if "description" in manifest:
         entry["description"] = manifest["description"]
@@ -133,6 +143,9 @@ def _string_array(
         not isinstance(item, str) or not item or len(item) > maximum_length for item in value
     ):
         errors.append(f"{field} contains invalid or too many strings")
+        return
+    if any(has_ascii_control(item) for item in value):
+        errors.append(f"{field} contains ASCII control characters or DEL")
         return
     folded = [item.casefold() for item in value]
     if len(folded) != len(set(folded)):
@@ -197,6 +210,8 @@ def validate_catalog(catalog: Any) -> list[str]:
                 not isinstance(entry[field], str) or not entry[field] or len(entry[field]) > maximum
             ):
                 errors.append(f"{context}.{field} must be a non-empty string of at most {maximum} characters")
+            elif field in entry and has_ascii_control(entry[field]):
+                errors.append(f"{context}.{field} contains ASCII control characters or DEL")
         category = entry.get("category")
         if isinstance(category, str) and not CATEGORY_RE.fullmatch(category):
             errors.append(f"{context}.category must be a lowercase slug")
@@ -238,6 +253,41 @@ def validate_catalog(catalog: Any) -> list[str]:
                 )
         if type(entry.get("hasConfiguration")) is not bool:
             errors.append(f"{context}.hasConfiguration must be a boolean")
+        components = entry.get("components")
+        if not isinstance(components, dict):
+            errors.append(f"{context}.components must be an object")
+        else:
+            for field in sorted(components.keys() - COMPONENT_FIELDS):
+                errors.append(f"{context}.components has unknown field: {field}")
+            for field in sorted(COMPONENT_FIELDS - components.keys()):
+                errors.append(f"{context}.components is missing field: {field}")
+            _string_array(
+                errors,
+                components.get("skills"),
+                f"{context}.components.skills",
+                maximum_items=1_000,
+                maximum_length=64,
+            )
+            servers = components.get("mcpServers")
+            if not isinstance(servers, dict):
+                errors.append(f"{context}.components.mcpServers must be an object")
+            else:
+                for server_name, transport in servers.items():
+                    if (
+                        not isinstance(server_name, str)
+                        or not server_name
+                        or has_ascii_control(server_name)
+                    ):
+                        errors.append(
+                            f"{context}.components.mcpServers names must be non-empty "
+                            "and contain no ASCII controls or DEL"
+                        )
+                    if not isinstance(transport, str) or transport not in MCP_TRANSPORTS:
+                        errors.append(
+                            f"{context}.components.mcpServers[{json.dumps(server_name)}] has invalid transport"
+                        )
+            if not components.get("skills") and not components.get("mcpServers"):
+                errors.append(f"{context}.components must contain at least one component")
         if entry.get("path") != f"./plugins/{name}":
             errors.append(f"{context}.path must equal ./plugins/{name}")
         if not isinstance(entry.get("digest"), str) or not DIGEST_RE.fullmatch(entry["digest"]):
@@ -252,7 +302,7 @@ def validate_catalog(catalog: Any) -> list[str]:
                 or "\\" in icon
                 or suffix.startswith("/")
                 or any(part in {"", ".", ".."} for part in parts)
-                or any(ord(character) < 0x20 or ord(character) == 0x7F for character in icon)
+                or has_ascii_control(icon)
             ):
                 errors.append(f"{context}.icon must remain within its plugin path")
 

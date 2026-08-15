@@ -86,6 +86,12 @@ ALLOWED_RUNTIMES = {"openclaw", "hermes"}
 EXPANDED_CWD_PLACEHOLDERS = ("${PLUGIN_ROOT}", "${PLUGIN_DATA}")
 
 
+def has_ascii_control(value: str) -> bool:
+    """Return whether a catalog-facing string contains ASCII controls or DEL."""
+
+    return any(ord(character) < 0x20 or ord(character) == 0x7F for character in value)
+
+
 class DuplicateKeyError(ValueError):
     """Raised when JSON contains a duplicate member name."""
 
@@ -98,6 +104,8 @@ class PluginReport:
     valid_skills: int = 0
     valid_servers: int = 0
     manifest: dict[str, Any] | None = field(default=None, repr=False)
+    skills: list[str] = field(default_factory=list)
+    mcp_servers: dict[str, str] = field(default_factory=dict)
 
 
 def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -133,6 +141,7 @@ class Validator:
         self.root = root
         self.repository_root = repository_root
         self.errors: list[str] = []
+        self.skill_names: list[str] = []
         self.server_types: dict[str, str] = {}
         self.configured_targets: dict[str, dict[str, set[str]]] = {}
         self.bare_commands: set[str] = set()
@@ -170,6 +179,7 @@ class Validator:
         *,
         required: bool = False,
         maximum: int | None = None,
+        catalog_facing: bool = False,
     ) -> str | None:
         if not isinstance(value, str):
             self.error(path, f"{field_name} must be a string")
@@ -179,6 +189,9 @@ class Validator:
             return None
         if maximum is not None and len(value) > maximum:
             self.error(path, f"{field_name} exceeds {maximum} characters")
+            return None
+        if catalog_facing and has_ascii_control(value):
+            self.error(path, f"{field_name} contains ASCII control characters or DEL")
             return None
         return value
 
@@ -274,6 +287,7 @@ class Validator:
                     field_name,
                     required=field_name == "description",
                     maximum=maximum,
+                    catalog_facing=field_name == "description",
                 )
         if "author" in manifest:
             author = manifest["author"]
@@ -289,6 +303,7 @@ class Validator:
                         f"author.{field_name}",
                         required=field_name == "name",
                         maximum=maximum,
+                        catalog_facing=field_name == "name",
                     )
         self.string_array(
             path,
@@ -346,6 +361,7 @@ class Validator:
                 self.error(skill_md, message)
             if len(self.errors) == before:
                 valid += 1
+                self.skill_names.append(entry.name)
         return valid
 
     def stdio(self, path: Path, name: str, server: dict[str, Any]) -> None:
@@ -494,6 +510,12 @@ class Validator:
         for name, server in servers.items():
             server_path = path
             before = len(self.errors)
+            if not name or has_ascii_control(name):
+                self.error(
+                    server_path,
+                    f"{self.server_context(name)} name must be non-empty and contain no ASCII controls or DEL",
+                )
+                continue
             if not isinstance(server, dict):
                 self.error(server_path, f"{self.server_context(name)} must be an object")
                 continue
@@ -539,7 +561,14 @@ class Validator:
             self.error(path, "extensions.ai.clawdi.display is required and must be an object")
         else:
             self.closed(path, display, DISPLAY_FIELDS)
-            self.string(path, display.get("name"), "display.name", required=True, maximum=80)
+            self.string(
+                path,
+                display.get("name"),
+                "display.name",
+                required=True,
+                maximum=80,
+                catalog_facing=True,
+            )
             category = self.string(path, display.get("category"), "display.category", required=True, maximum=64)
             if category is not None and not CATEGORY_RE.fullmatch(category):
                 self.error(path, "display.category must be a lowercase slug")
@@ -624,7 +653,11 @@ class Validator:
             self.error(path, f"{field_name} must contain at least {minimum_items} item(s)")
             return None
         invalid_item = any(
-            not isinstance(item, str) or not item or len(item) > maximum_length for item in value
+            not isinstance(item, str)
+            or not item
+            or len(item) > maximum_length
+            or has_ascii_control(item)
+            for item in value
         )
         if len(value) > maximum_items or invalid_item:
             self.error(path, f"{field_name} contains invalid or too many strings")
@@ -761,4 +794,6 @@ def validate_plugin(root: Path, repository_root: Path) -> PluginReport:
         valid_skills=valid_skills,
         valid_servers=valid_servers,
         manifest=manifest if not validator.errors else None,
+        skills=validator.skill_names if not validator.errors else [],
+        mcp_servers=dict(validator.server_types) if not validator.errors else {},
     )

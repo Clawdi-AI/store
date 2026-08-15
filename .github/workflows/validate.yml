@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -30,6 +28,7 @@ jobs:
         run: |
           set -eu
           baseline="$RUNNER_TEMP/v2-baseline-catalog.json"
+          git fetch --no-tags --depth=1 origin "$BASE_SHA"
           if git cat-file -e "${BASE_SHA}:v2/catalog.json" 2>/dev/null; then
             git show "${BASE_SHA}:v2/catalog.json" > "$baseline"
             python v2/scripts/catalog.py --check-baseline "$baseline"

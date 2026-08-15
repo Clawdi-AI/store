@@ -47,7 +47,13 @@ def make_report(
         "keywords": [name],
         "extensions": {"ai.clawdi": extension},
     }
-    return PluginReport(key=name, digest=digest, manifest=manifest)
+    return PluginReport(
+        key=name,
+        digest=digest,
+        manifest=manifest,
+        skills=[f"{name}-skill"],
+        mcp_servers={f"{name}-server": "stdio"},
+    )
 
 
 class CatalogTests(unittest.TestCase):
@@ -61,11 +67,21 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(render_catalog(catalog), render_catalog(generate_catalog([alpha, zulu])))
         self.assertFalse(catalog["plugins"][0]["hasConfiguration"])
         self.assertTrue(catalog["plugins"][1]["hasConfiguration"])
+        self.assertEqual(
+            {"skills": ["alpha-skill"], "mcpServers": {"alpha-server": "stdio"}},
+            catalog["plugins"][0]["components"],
+        )
         self.assertEqual([], validate_catalog(catalog))
 
         invalid = copy.deepcopy(catalog)
-        invalid["plugins"][0]["mcpServers"] = {}
-        self.assertIn("plugins[0] has unknown field: mcpServers", validate_catalog(invalid))
+        invalid["plugins"][0]["displayName"] = "bad\nname"
+        self.assertIn("ASCII control characters", "\n".join(validate_catalog(invalid)))
+        invalid["plugins"][0]["displayName"] = "Alpha"
+        invalid["plugins"][0]["keywords"] = ["bad\x7fname"]
+        self.assertIn("ASCII control characters", "\n".join(validate_catalog(invalid)))
+        invalid["plugins"][0]["keywords"] = ["alpha"]
+        invalid["plugins"][0]["components"]["details"] = {}
+        self.assertIn("plugins[0].components has unknown field: details", validate_catalog(invalid))
 
         with tempfile.TemporaryDirectory(prefix=".store-catalog-test-", dir=V2_ROOT) as temporary:
             path = Path(temporary) / "catalog.json"
@@ -102,6 +118,10 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual("./plugins/clawdi", entry["path"])
         self.assertEqual("sha256-tree-v1:" + CLAWDI_DIGEST, entry["digest"])
         self.assertFalse(entry["hasConfiguration"])
+        self.assertEqual(
+            {"skills": ["clawdi"], "mcpServers": {"clawdi": "streamable-http"}},
+            entry["components"],
+        )
 
         manifest = json.loads((package / "plugin.json").read_text(encoding="utf-8"))
         self.assertNotIn("tags", manifest["extensions"]["ai.clawdi"]["display"])
