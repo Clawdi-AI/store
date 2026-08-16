@@ -195,7 +195,7 @@ class PluginValidationTests(unittest.TestCase):
             )
 
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-            self.assertIn("Agent v2 Store validation passed (1 plugin(s)).", result.stdout)
+            self.assertIn("Agent v2 Store validation passed (0 plugin(s)).", result.stdout)
 
     def test_store_scanner_rejects_non_directory_entries(self) -> None:
         with temporary_directory(".store-plugin-test-") as temporary:

@@ -2,6 +2,9 @@
 
 This is the independent Store root for Agent Plugins 1.0.0 packages. It does
 not change or share validation with the legacy `agents/` and `skills/` Stores.
+Clawdi's first-party Skill and MCP capabilities are built into its Cloud/runtime
+projection, not distributed as an installable Agent Plugin, and therefore do
+not appear in this Store catalog.
 
 ## Package layout
 
@@ -92,8 +95,9 @@ arbitrary settings, install hooks, OAuth registration, and dependency
 installers are not author-controlled extension data. Literal credential-bearing
 MCP environment or header values are rejected; declare credentials as secret
 slots only for targets that implement this Clawdi extension. Agent Plugins
-1.0.0 defines no portable `secretRefs` field; authentication can instead remain
-entirely client-managed.
+1.0.0 defines no portable `secretRefs` field. For protected remote MCP servers,
+standard MCP Authorization is performed by the MCP client and managed by its
+host/runtime, not declared as Store package authentication metadata.
 
 ## Generated Store index
 
@@ -121,16 +125,19 @@ or values. The current Clawdi native adapter must not offer entries with
 `hasConfiguration: true` until it supports that object.
 
 The index contains no Git commit. `path` is resolved relative to the directory
-containing `v2/catalog.json`, so `./plugins/clawdi` selects
-`v2/plugins/clawdi` in the same snapshot. A consumer resolves an external Store
-commit, verifies `digest`, and binds the install to that commit plus digest. The
-index exposes one current published version per plugin; it is not a
-multi-version registry. Existing installs remain pinned to their original
-commit and digest after a newer version replaces the listing.
+containing `v2/catalog.json`, so `./plugins/example-plugin` selects
+`v2/plugins/example-plugin` in the same snapshot. A consumer resolves an
+external Store commit, verifies `digest`, and binds the install to that commit
+plus digest. The index exposes one current published version per plugin; it is
+not a multi-version registry. Existing installs remain pinned to their original
+commit and digest after a newer version replaces or removes the listing; the
+package bytes remain fetchable from that historical commit.
 
 CI rejects generated-file drift. Its separate baseline check also rejects a
 version regression or a changed digest for a `name` and `version` already
-present in the baseline catalog; changed package bytes require a newer version.
+present in both catalogs; changed package bytes require a newer version. A
+removed listing is intentionally absent from that comparison because it does
+not change the package identity at its historical commit.
 
 ## Validation and digest
 
@@ -182,4 +189,5 @@ explicitly Clawdi-owned.
 - [MCP schema 1.0.0](https://agent-plugins.org/schemas/1.0.0/mcp.schema.json)
 - [Loading and discovery](https://agent-plugins.org/client-implementers/loading-and-discovery.md)
 - [MCP runtime](https://agent-plugins.org/client-implementers/mcp-runtime.md)
+- [MCP Authorization](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
 - [Agent Skills specification](https://agentskills.io/specification.md)
