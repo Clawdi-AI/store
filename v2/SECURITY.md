@@ -11,3 +11,10 @@ Review bundled executables and dependencies before publishing. Plugin packages
 cannot declare installers, install hooks, OAuth registration, trust state, or
 other privileged author-controlled behavior. Follow the repository root
 `SECURITY.md` for private vulnerability reporting and incident response.
+
+Source-package recipes must pin full GitHub commit IDs. Generated archives
+reject links, special files, path escapes, collisions, and unbounded input, and
+release assets are never overwritten. Review upstream licenses and source
+changes before updating a pin. A package's remote MCP URL is public package
+configuration; OAuth tokens remain client-managed and are not baked into the
+artifact or Store catalog.

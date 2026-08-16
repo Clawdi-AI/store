@@ -1,4 +1,99 @@
 {
-  "plugins": [],
-  "schemaVersion": 1
+  "plugins": [
+    {
+      "category": "developer-tools",
+      "components": {
+        "mcpServers": {},
+        "skills": [
+          "cetus-aggregator",
+          "cetus-clmm",
+          "cetus-dlmm"
+        ]
+      },
+      "description": "Cetus Protocol development guidance for swaps, CLMM, and DLMM on Sui.",
+      "digest": "sha256-tree-v1:015fd5cb641dae43479e500e65f0582831f81051ccc7c26579137e38ee8ec721",
+      "displayName": "Cetus Protocol",
+      "hasConfiguration": false,
+      "keywords": [
+        "cetus",
+        "sui",
+        "defi",
+        "liquidity",
+        "swaps"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "cetus",
+      "publisher": "Cetus Protocol",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:10974bca87f9045c9fc68a6af4b2fff16304d806b6cb4754fe75c54d1b105b72",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-cetus-v0.1.0/cetus-0.1.0.tar.gz"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "category": "developer-tools",
+      "components": {
+        "mcpServers": {
+          "sui-docs": "streamable-http"
+        },
+        "skills": [
+          "accessing-data",
+          "composable-move-functions",
+          "frontend-apps",
+          "generate-sui-agent-config",
+          "modern-move-syntax",
+          "move-unit-testing",
+          "naming-conventions",
+          "ptbs",
+          "sui-build",
+          "sui-cli",
+          "sui-client",
+          "sui-install",
+          "sui-move",
+          "sui-move-project",
+          "sui-object-model",
+          "sui-overview",
+          "sui-publish",
+          "sui-sdks",
+          "walrus-sites",
+          "walrus-sites-portal",
+          "walrus-sites-publishing"
+        ]
+      },
+      "description": "Official Sui development guidance and documentation access for coding agents.",
+      "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
+      "displayName": "Sui Development",
+      "hasConfiguration": false,
+      "keywords": [
+        "sui",
+        "move",
+        "blockchain",
+        "smart-contracts",
+        "sdk"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "sui",
+      "publisher": "Mysten Labs",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:a9364b27efea274693e0ef7f7a5b56974f020c261876aade22f64df6e8975f24",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.1.0/sui-0.1.0.tar.gz"
+      },
+      "version": "0.1.0"
+    }
+  ],
+  "schemaVersion": 2
 }

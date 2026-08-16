@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-sui-v0.1.0",
+    "asset": "sui-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/MystenLabs/skills",
+      "commit": "30d9f85dedeb4b29f0cc37909035f270d543f9f3",
+      "mappings": [
+        {
+          "source": "accessing-data",
+          "target": "skills/accessing-data"
+        },
+        {
+          "source": "composable-move-functions",
+          "target": "skills/composable-move-functions"
+        },
+        {
+          "source": "frontend-apps",
+          "target": "skills/frontend-apps"
+        },
+        {
+          "source": "generate-sui-agent-config",
+          "target": "skills/generate-sui-agent-config"
+        },
+        {
+          "source": "modern-move-syntax",
+          "target": "skills/modern-move-syntax"
+        },
+        {
+          "source": "move-unit-testing",
+          "target": "skills/move-unit-testing"
+        },
+        {
+          "source": "naming-conventions",
+          "target": "skills/naming-conventions"
+        },
+        {
+          "source": "object-model",
+          "target": "skills/sui-object-model"
+        },
+        {
+          "source": "ptbs",
+          "target": "skills/ptbs"
+        },
+        {
+          "source": "sui-build-test",
+          "target": "skills/sui-build"
+        },
+        {
+          "source": "sui-cli",
+          "target": "skills/sui-cli"
+        },
+        {
+          "source": "sui-client",
+          "target": "skills/sui-client"
+        },
+        {
+          "source": "sui-install",
+          "target": "skills/sui-install"
+        },
+        {
+          "source": "sui-move-project",
+          "target": "skills/sui-move-project"
+        },
+        {
+          "source": "sui-move",
+          "target": "skills/sui-move"
+        },
+        {
+          "source": "sui-overview",
+          "target": "skills/sui-overview"
+        },
+        {
+          "source": "sui-publish",
+          "target": "skills/sui-publish"
+        },
+        {
+          "source": "sui-sdks",
+          "target": "skills/sui-sdks"
+        },
+        {
+          "source": "walrus-sites",
+          "target": "skills/walrus-sites",
+          "exclude": [
+            "portal",
+            "publishing"
+          ]
+        },
+        {
+          "source": "walrus-sites/portal",
+          "target": "skills/walrus-sites-portal"
+        },
+        {
+          "source": "walrus-sites/publishing",
+          "target": "skills/walrus-sites-publishing"
+        }
+      ]
+    }
+  ]
+}

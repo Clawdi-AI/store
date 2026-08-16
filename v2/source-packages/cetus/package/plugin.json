@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "cetus",
+  "version": "0.1.0",
+  "description": "Cetus Protocol development guidance for swaps, CLMM, and DLMM on Sui.",
+  "author": {
+    "name": "Cetus Protocol",
+    "url": "https://www.cetus.zone"
+  },
+  "homepage": "https://cetus-1.gitbook.io/cetus-developer-docs/",
+  "repository": "https://github.com/CetusProtocol/cetus-skills",
+  "keywords": [
+    "cetus",
+    "sui",
+    "defi",
+    "liquidity",
+    "swaps"
+  ],
+  "extensions": {
+    "ai.clawdi": {
+      "schemaVersion": 1,
+      "display": {
+        "name": "Cetus Protocol",
+        "category": "developer-tools",
+        "languages": [
+          "en"
+        ]
+      },
+      "compatibility": {
+        "runtimes": [
+          "openclaw",
+          "hermes"
+        ]
+      }
+    }
+  }
+}

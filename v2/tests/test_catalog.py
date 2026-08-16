@@ -63,6 +63,10 @@ class CatalogTests(unittest.TestCase):
             {"skills": ["alpha-skill"], "mcpServers": {"alpha-server": "stdio"}},
             catalog["plugins"][0]["components"],
         )
+        self.assertEqual(
+            {"type": "store", "path": "./plugins/alpha"},
+            catalog["plugins"][0]["source"],
+        )
         self.assertEqual([], validate_catalog(catalog))
 
         invalid = copy.deepcopy(catalog)
@@ -80,6 +84,13 @@ class CatalogTests(unittest.TestCase):
         invalid["plugins"][0]["components"].pop("details")
         invalid["plugins"][0]["components"]["mcpServers"] = {"x" * 257: "stdio"}
         self.assertIn("1-256 characters", "\n".join(validate_catalog(invalid)))
+        invalid["plugins"][0]["components"]["mcpServers"] = {"alpha-server": "stdio"}
+        invalid["plugins"][0]["source"] = {
+            "type": "github-release",
+            "url": "https://example.com/plugin.tar.gz",
+            "archiveDigest": "sha256:" + "a" * 64,
+        }
+        self.assertIn("canonical GitHub release", "\n".join(validate_catalog(invalid)))
 
         with tempfile.TemporaryDirectory(prefix=".store-catalog-test-", dir=V2_ROOT) as temporary:
             path = Path(temporary) / "catalog.json"
@@ -112,6 +123,22 @@ class CatalogTests(unittest.TestCase):
             "alpha version did not increase",
             "\n".join(check_version_immutability(build_only, baseline)),
         )
+        moved = copy.deepcopy(baseline)
+        moved["plugins"][0]["source"] = {
+            "type": "github-release",
+            "url": "https://github.com/example/plugins/releases/download/alpha-v1.0.0/alpha.tar.gz",
+            "archiveDigest": "sha256:" + "f" * 64,
+        }
+        self.assertIn(
+            "alpha@1.0.0 changed source",
+            "\n".join(check_version_immutability(moved, baseline)),
+        )
+
+        legacy_baseline = copy.deepcopy(baseline)
+        legacy_baseline["schemaVersion"] = 1
+        legacy_baseline["plugins"][0]["path"] = "./plugins/alpha"
+        legacy_baseline["plugins"][0].pop("source")
+        self.assertEqual([], check_version_immutability(baseline, legacy_baseline))
 
 
 if __name__ == "__main__":

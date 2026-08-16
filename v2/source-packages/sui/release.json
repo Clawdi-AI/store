@@ -1,0 +1,60 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {
+        "sui-docs": "streamable-http"
+      },
+      "skills": [
+        "accessing-data",
+        "composable-move-functions",
+        "frontend-apps",
+        "generate-sui-agent-config",
+        "modern-move-syntax",
+        "move-unit-testing",
+        "naming-conventions",
+        "ptbs",
+        "sui-build",
+        "sui-cli",
+        "sui-client",
+        "sui-install",
+        "sui-move",
+        "sui-move-project",
+        "sui-object-model",
+        "sui-overview",
+        "sui-publish",
+        "sui-sdks",
+        "walrus-sites",
+        "walrus-sites-portal",
+        "walrus-sites-publishing"
+      ]
+    },
+    "description": "Official Sui development guidance and documentation access for coding agents.",
+    "displayName": "Sui Development",
+    "hasConfiguration": false,
+    "keywords": [
+      "sui",
+      "move",
+      "blockchain",
+      "smart-contracts",
+      "sdk"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "sui",
+    "publisher": "Mysten Labs",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:a9364b27efea274693e0ef7f7a5b56974f020c261876aade22f64df6e8975f24",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.1.0/sui-0.1.0.tar.gz"
+  }
+}
