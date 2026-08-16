@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import re
 import stat
@@ -35,12 +36,18 @@ else:
         has_ascii_control,
     )
 
+if __package__:
+    from .source_package import SourcePackageError, discover_recipes, load_source_releases
+else:
+    from source_package import SourcePackageError, discover_recipes, load_source_releases
+
 V2_ROOT = Path(__file__).resolve().parent.parent
 REPOSITORY_ROOT = V2_ROOT.parent
 CATALOG_PATH = V2_ROOT / "catalog.json"
-CATALOG_SCHEMA_VERSION = 1
+CATALOG_SCHEMA_VERSION = 2
 DIGEST_PREFIX = "sha256-tree-v1:"
 DIGEST_RE = re.compile(r"^sha256-tree-v1:[0-9a-f]{64}$")
+ARCHIVE_DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
 CATALOG_FIELDS = {"schemaVersion", "plugins"}
 ENTRY_FIELDS = {
@@ -53,9 +60,8 @@ ENTRY_FIELDS = {
     "keywords",
     "languages",
     "runtimes",
-    "hasConfiguration",
     "icon",
-    "path",
+    "source",
     "digest",
     "components",
 }
@@ -67,13 +73,13 @@ REQUIRED_ENTRY_FIELDS = {
     "keywords",
     "languages",
     "runtimes",
-    "hasConfiguration",
-    "path",
+    "source",
     "digest",
     "components",
 }
 COMPONENT_FIELDS = {"skills", "mcpServers"}
 MCP_TRANSPORTS = {"stdio", "streamable-http", "sse"}
+SOURCE_FIELDS = {"type", "path", "url", "archiveDigest"}
 
 
 class CatalogError(ValueError):
@@ -96,8 +102,7 @@ def _catalog_entry(report: PluginReport) -> dict[str, Any]:
         "keywords": list(manifest["keywords"]),
         "languages": list(display["languages"]),
         "runtimes": list(compatibility.get("runtimes", [])),
-        "hasConfiguration": False,
-        "path": f"./plugins/{report.key}",
+        "source": {"type": "store", "path": f"./plugins/{report.key}"},
         "digest": f"{DIGEST_PREFIX}{report.digest}",
         "components": {
             "skills": list(report.skills),
@@ -114,10 +119,18 @@ def _catalog_entry(report: PluginReport) -> dict[str, Any]:
     return entry
 
 
-def generate_catalog(reports: Iterable[PluginReport]) -> dict[str, Any]:
+def generate_catalog(
+    reports: Iterable[PluginReport],
+    source_releases: Iterable[dict[str, Any]] = (),
+) -> dict[str, Any]:
     """Build a deterministic catalog from already-validated plugin reports."""
 
     entries = [_catalog_entry(report) for report in reports]
+    for release in source_releases:
+        entry = copy.deepcopy(release["catalog"])
+        entry["source"] = copy.deepcopy(release["source"])
+        entry["digest"] = release["digest"]
+        entries.append(entry)
     entries.sort(key=lambda entry: entry["name"].encode("utf-8"))
     catalog = {"schemaVersion": CATALOG_SCHEMA_VERSION, "plugins": entries}
     errors = validate_catalog(catalog)
@@ -169,8 +182,47 @@ def _string_array(
         errors.append(f"{field} must not contain case-folded duplicates")
 
 
+def _validate_source(errors: list[str], value: Any, context: str, name: str) -> None:
+    if not isinstance(value, dict):
+        errors.append(f"{context} must be an object")
+        return
+    for field in sorted(value.keys() - SOURCE_FIELDS):
+        errors.append(f"{context} has unknown field: {field}")
+    source_type = value.get("type")
+    if source_type == "store":
+        if set(value) != {"type", "path"}:
+            errors.append(f"{context} store source must contain only type and path")
+        if value.get("path") != f"./plugins/{name}":
+            errors.append(f"{context}.path must equal ./plugins/{name}")
+        return
+    if source_type == "github-release":
+        if set(value) != {"type", "url", "archiveDigest"}:
+            errors.append(
+                f"{context} github-release source must contain type, url, and archiveDigest"
+            )
+        url = value.get("url")
+        if (
+            not isinstance(url, str)
+            or len(url) > 1000
+            or re.fullmatch(
+                r"https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/"
+                r"releases/download/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+\.tar\.gz",
+                url,
+            )
+            is None
+        ):
+            errors.append(f"{context}.url must be a canonical GitHub release asset URL")
+        archive_digest = value.get("archiveDigest")
+        if not isinstance(archive_digest, str) or ARCHIVE_DIGEST_RE.fullmatch(
+            archive_digest
+        ) is None:
+            errors.append(f"{context}.archiveDigest must be a sha256 digest")
+        return
+    errors.append(f"{context}.type is unsupported")
+
+
 def validate_catalog(catalog: Any) -> list[str]:
-    """Validate the closed Clawdi Store catalog v1 contract."""
+    """Validate the closed Clawdi Store catalog v2 contract."""
 
     if not isinstance(catalog, dict):
         return ["catalog must be an object"]
@@ -268,8 +320,6 @@ def validate_catalog(catalog: Any) -> list[str]:
                     f"{context}.runtimes contains unsupported values: "
                     + ", ".join(sorted(unknown_runtimes))
                 )
-        if entry.get("hasConfiguration") is not False:
-            errors.append(f"{context}.hasConfiguration must equal false")
         components = entry.get("components")
         if not isinstance(components, dict):
             errors.append(f"{context}.components must be an object")
@@ -310,16 +360,18 @@ def validate_catalog(catalog: Any) -> list[str]:
                         )
             if not components.get("skills") and not components.get("mcpServers"):
                 errors.append(f"{context}.components must contain at least one component")
-        if entry.get("path") != f"./plugins/{name}":
-            errors.append(f"{context}.path must equal ./plugins/{name}")
+        _validate_source(errors, entry.get("source"), f"{context}.source", name)
         if not isinstance(entry.get("digest"), str) or not DIGEST_RE.fullmatch(entry["digest"]):
             errors.append(f"{context}.digest must be a sha256-tree-v1 digest")
         icon = entry.get("icon")
         if isinstance(icon, str):
+            source = entry.get("source")
             prefix = f"./plugins/{name}/"
             suffix = icon[len(prefix) :] if icon.startswith(prefix) else ""
             if (
-                not suffix
+                not isinstance(source, dict)
+                or source.get("type") != "store"
+                or not suffix
                 or "\\" in icon
                 or suffix.startswith("/")
                 or any(part in {"", ".", ".."} for part in suffix.split("/"))
@@ -375,10 +427,42 @@ def check_version_immutability(current: Any, baseline: Any) -> list[str]:
     """Reject changed bytes for a name and version present in the baseline."""
 
     errors = [f"current: {error}" for error in validate_catalog(current)]
-    errors.extend(f"baseline: {error}" for error in validate_catalog(baseline))
+    baseline_version = baseline.get("schemaVersion") if isinstance(baseline, dict) else None
+    if baseline_version == CATALOG_SCHEMA_VERSION:
+        errors.extend(f"baseline: {error}" for error in validate_catalog(baseline))
+    elif baseline_version == 1:
+        if not isinstance(baseline.get("plugins"), list):
+            errors.append("baseline: plugins must be an array")
+        else:
+            for index, entry in enumerate(baseline["plugins"]):
+                context = f"baseline: plugins[{index}]"
+                if not isinstance(entry, dict):
+                    errors.append(f"{context} must be an object")
+                    continue
+                if not isinstance(entry.get("name"), str) or not PLUGIN_NAME_RE.fullmatch(
+                    entry["name"]
+                ):
+                    errors.append(f"{context}.name is invalid")
+                if not isinstance(entry.get("version"), str) or not SEMVER_RE.fullmatch(
+                    entry["version"]
+                ):
+                    errors.append(f"{context}.version must be an exact Semantic Version")
+                if not isinstance(entry.get("digest"), str) or not DIGEST_RE.fullmatch(
+                    entry["digest"]
+                ):
+                    errors.append(f"{context}.digest must be a sha256-tree-v1 digest")
+    else:
+        errors.append("baseline: schemaVersion must equal 1 or 2")
     if errors:
         return errors
-    baseline_entries = {entry["name"]: entry for entry in baseline["plugins"]}
+    baseline_entries = {
+        entry["name"]: entry
+        for entry in baseline["plugins"]
+        if isinstance(entry, dict)
+        and isinstance(entry.get("name"), str)
+        and isinstance(entry.get("version"), str)
+        and isinstance(entry.get("digest"), str)
+    }
     for entry in current["plugins"]:
         old_entry = baseline_entries.get(entry["name"])
         if old_entry is None:
@@ -391,10 +475,17 @@ def check_version_immutability(current: Any, baseline: Any) -> list[str]:
                 f"{entry['name']} version did not increase from "
                 f"{old_entry['version']} to {entry['version']}"
             )
-        elif entry["version"] == old_entry["version"] and entry["digest"] != old_entry["digest"]:
-            errors.append(
-                f"{entry['name']}@{entry['version']} changed digest; publish changed bytes with a new version"
-            )
+        elif entry["version"] == old_entry["version"]:
+            if entry["digest"] != old_entry["digest"]:
+                errors.append(
+                    f"{entry['name']}@{entry['version']} changed digest; "
+                    "publish changed bytes with a new version"
+                )
+            if "source" in old_entry and entry["source"] != old_entry["source"]:
+                errors.append(
+                    f"{entry['name']}@{entry['version']} changed source; "
+                    "publish changed source identity with a new version"
+                )
     return errors
 
 
@@ -417,7 +508,15 @@ def main() -> int:
 
     if args.check_baseline is not None:
         current, current_errors = load_catalog(CATALOG_PATH)
-        baseline, baseline_errors = load_catalog(args.check_baseline)
+        try:
+            baseline = json.loads(
+                args.check_baseline.read_text(encoding="utf-8"),
+                object_pairs_hook=_json_object,
+            )
+            baseline_errors: list[str] = []
+        except (OSError, UnicodeError, json.JSONDecodeError, CatalogError, ValueError) as exc:
+            baseline = None
+            baseline_errors = [f"invalid catalog JSON: {exc}"]
         errors = [f"current: {error}" for error in current_errors]
         errors.extend(f"baseline: {error}" for error in baseline_errors)
         if not errors and current is not None and baseline is not None:
@@ -434,7 +533,12 @@ def main() -> int:
     report = validate_store()
     if _print_store_errors(report):
         return 1
-    catalog = generate_catalog(report.plugins)
+    try:
+        source_releases = load_source_releases(discover_recipes())
+    except SourcePackageError as exc:
+        print(f"ERROR {exc}")
+        return 1
+    catalog = generate_catalog(report.plugins, source_releases)
     if args.write:
         try:
             CATALOG_PATH.write_bytes(render_catalog(catalog))

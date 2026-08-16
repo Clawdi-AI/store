@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-cetus-v0.1.0",
+    "asset": "cetus-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/CetusProtocol/cetus-skills",
+      "commit": "7188f452abfbedac758c05aa1d1f62c4192e463c",
+      "mappings": [
+        {
+          "source": "skills/cetus-aggregator",
+          "target": "skills/cetus-aggregator"
+        },
+        {
+          "source": "skills/cetus-clmm",
+          "target": "skills/cetus-clmm"
+        },
+        {
+          "source": "skills/cetus-dlmm",
+          "target": "skills/cetus-dlmm"
+        }
+      ]
+    }
+  ]
+}

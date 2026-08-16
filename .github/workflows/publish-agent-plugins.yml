@@ -1,0 +1,59 @@
+name: Publish Agent Plugin Artifacts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "v2/source-packages/**"
+      - "v2/scripts/source_package.py"
+      - "v2/scripts/plugin_package.py"
+      - "v2/scripts/plugin_validation.py"
+      - "v2/scripts/skill_validation.py"
+      - "v2/schemas/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-plugin-artifacts
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validation dependencies
+        run: python -m pip install --disable-pip-version-check -r v2/requirements.txt
+      - name: Build and verify artifacts
+        run: python v2/scripts/source_package.py --check --artifacts "$RUNNER_TEMP/artifacts"
+      - name: Publish immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for release in v2/source-packages/*/release.json; do
+            url=$(jq -r '.source.url' "$release")
+            expected=$(jq -r '.source.archiveDigest | sub("^sha256:"; "")' "$release")
+            tag=$(python -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1].split("/releases/download/", 1)[1].split("/", 1)[0]))' "$url")
+            asset=$(python -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1].rsplit("/", 1)[1]))' "$url")
+            artifact="$RUNNER_TEMP/artifacts/$asset"
+            actual=$(sha256sum "$artifact" | cut -d ' ' -f 1)
+            test "$actual" = "$expected"
+
+            existing="$RUNNER_TEMP/existing-$asset"
+            if gh release download "$tag" --pattern "$asset" --output "$existing" 2>/dev/null; then
+              test "$(sha256sum "$existing" | cut -d ' ' -f 1)" = "$expected"
+              continue
+            fi
+            if gh release view "$tag" >/dev/null 2>&1; then
+              gh release upload "$tag" "$artifact"
+            else
+              gh release create "$tag" "$artifact" --title "$tag" --notes "Generated from pinned upstream sources at $GITHUB_SHA."
+            fi
+          done

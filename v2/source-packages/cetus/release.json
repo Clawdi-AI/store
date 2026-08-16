@@ -1,0 +1,39 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {},
+      "skills": [
+        "cetus-aggregator",
+        "cetus-clmm",
+        "cetus-dlmm"
+      ]
+    },
+    "description": "Cetus Protocol development guidance for swaps, CLMM, and DLMM on Sui.",
+    "displayName": "Cetus Protocol",
+    "keywords": [
+      "cetus",
+      "sui",
+      "defi",
+      "liquidity",
+      "swaps"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "cetus",
+    "publisher": "Cetus Protocol",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:015fd5cb641dae43479e500e65f0582831f81051ccc7c26579137e38ee8ec721",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:10974bca87f9045c9fc68a6af4b2fff16304d806b6cb4754fe75c54d1b105b72",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-cetus-v0.1.0/cetus-0.1.0.tar.gz"
+  }
+}

@@ -12,10 +12,12 @@ if __package__:
     from .catalog import CATALOG_PATH, check_catalog, generate_catalog
     from .plugin_package import escape_path
     from .plugin_validation import PluginReport, validate_plugin
+    from .source_package import SourcePackageError, discover_recipes, load_source_releases
 else:
     from catalog import CATALOG_PATH, check_catalog, generate_catalog
     from plugin_package import escape_path
     from plugin_validation import PluginReport, validate_plugin
+    from source_package import SourcePackageError, discover_recipes, load_source_releases
 
 V2_ROOT = Path(__file__).resolve().parent.parent
 REPOSITORY_ROOT = V2_ROOT.parent
@@ -100,8 +102,18 @@ def main() -> int:
             print(f"OK {plugin.key} sha256-tree-v1:{plugin.digest}")
 
     error_count = len(report.errors) + sum(len(plugin.errors) for plugin in report.plugins)
+    source_releases: list[dict[str, object]] = []
     if not error_count:
-        for message in check_catalog(CATALOG_PATH, generate_catalog(report.plugins)):
+        try:
+            source_releases = load_source_releases(discover_recipes())
+        except SourcePackageError as exc:
+            print(f"ERROR v2/source-packages: {exc}")
+            error_count += 1
+    if not error_count:
+        for message in check_catalog(
+            CATALOG_PATH,
+            generate_catalog(report.plugins, source_releases),
+        ):
             print(f"ERROR v2/catalog.json: {message}")
             error_count += 1
     if error_count:

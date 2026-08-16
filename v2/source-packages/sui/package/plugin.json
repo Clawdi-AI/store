@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "sui",
+  "version": "0.1.0",
+  "description": "Official Sui development guidance and documentation access for coding agents.",
+  "author": {
+    "name": "Mysten Labs",
+    "url": "https://www.mystenlabs.com"
+  },
+  "homepage": "https://docs.sui.io/skills",
+  "repository": "https://github.com/MystenLabs/skills",
+  "keywords": [
+    "sui",
+    "move",
+    "blockchain",
+    "smart-contracts",
+    "sdk"
+  ],
+  "extensions": {
+    "ai.clawdi": {
+      "schemaVersion": 1,
+      "display": {
+        "name": "Sui Development",
+        "category": "developer-tools",
+        "languages": [
+          "en"
+        ]
+      },
+      "compatibility": {
+        "runtimes": [
+          "openclaw",
+          "hermes"
+        ]
+      }
+    }
+  }
+}
