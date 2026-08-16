@@ -45,18 +45,14 @@ PLUGIN_FIELDS = {
     "extensions",
 }
 AUTHOR_FIELDS = {"name", "email", "url"}
-CLAWDI_FIELDS = {"schemaVersion", "display", "configuration", "compatibility"}
+CLAWDI_FIELDS = {"schemaVersion", "display", "compatibility"}
 DISPLAY_FIELDS = {"name", "icon", "category", "languages"}
-CONFIGURATION_FIELDS = {"secretSlots"}
-SLOT_FIELDS = {"label", "description", "required", "bindings"}
-BINDING_FIELDS = {"server", "target", "name", "prefix"}
 COMPATIBILITY_FIELDS = {"runtimes", "executables"}
 MCP_FIELDS = {"$schema", "mcpServers"}
 STDIO_FIELDS = {"type", "command", "args", "env", "cwd"}
 REMOTE_FIELDS = {"type", "url", "headers"}
 
 PLUGIN_NAME_RE = re.compile(r"^(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$")
-SLOT_ID_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 ENV_KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,127}$")
 EXECUTABLE_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$")
 CATEGORY_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
@@ -145,7 +141,6 @@ class Validator:
         self.errors: list[str] = []
         self.skill_names: list[str] = []
         self.server_types: dict[str, str] = {}
-        self.configured_targets: dict[str, dict[str, set[str]]] = {}
         self.bare_commands: set[str] = set()
 
     def path(self, path: Path) -> str:
@@ -409,7 +404,7 @@ class Validator:
                         if SENSITIVE_NAME_RE.search(key) or key.upper() == "AUTH" or (value and _looks_secret(value)):
                             self.error(
                                 path,
-                                f"{context}.env.{key} appears credential-bearing; use a secret slot binding",
+                                f"{context}.env.{key} must be a public non-secret literal",
                             )
         if "cwd" in server:
             cwd = server["cwd"]
@@ -479,7 +474,7 @@ class Validator:
                     ):
                         self.error(
                             path,
-                            f"{context}.headers.{key} appears credential-bearing; use a secret slot binding",
+                            f"{context}.headers.{key} must be a public non-secret literal",
                         )
 
     def mcp(self) -> int:
@@ -535,22 +530,6 @@ class Validator:
             if len(self.errors) == before:
                 valid += 1
                 self.server_types[name] = server_type
-                self.configured_targets[name] = {
-                    "env": {
-                        key.casefold()
-                        for key in server.get("env", {})
-                        if isinstance(key, str)
-                    }
-                    if server_type == "stdio"
-                    else set(),
-                    "header": {
-                        key.casefold()
-                        for key in server.get("headers", {})
-                        if isinstance(key, str)
-                    }
-                    if server_type != "stdio"
-                    else set(),
-                }
         return valid
 
     def clawdi_extension(self, manifest: dict[str, Any]) -> set[str]:
@@ -590,18 +569,6 @@ class Validator:
                 icon_value = self.string(path, icon, "display.icon", required=True, maximum=512)
                 if icon_value is not None:
                     self.safe_relative(path, icon_value, "display.icon", expected="file")
-
-        if "configuration" in extension:
-            configuration = extension["configuration"]
-            if not isinstance(configuration, dict):
-                self.error(path, "configuration must be an object")
-            else:
-                self.closed(path, configuration, CONFIGURATION_FIELDS)
-                slots = configuration.get("secretSlots")
-                if not isinstance(slots, dict):
-                    self.error(path, "configuration.secretSlots must be an object")
-                else:
-                    self.secret_slots(path, slots)
 
         declared_executables: set[str] = set()
         if "compatibility" in extension:
@@ -672,72 +639,6 @@ class Validator:
         if len(folded) != len(set(folded)):
             self.error(path, f"{field_name} must not contain case-folded duplicates")
         return value
-
-    def secret_slots(self, path: Path, slots: dict[str, Any]) -> None:
-        bound_targets: set[tuple[str, str, str]] = set()
-        if len(slots) > 64:
-            self.error(path, "configuration.secretSlots exceeds 64 entries")
-        for slot_id, slot in slots.items():
-            if not SLOT_ID_RE.fullmatch(slot_id):
-                self.error(path, f"invalid secret slot ID: {slot_id}")
-            if not isinstance(slot, dict):
-                self.error(path, f"secret slot {slot_id} must be an object")
-                continue
-            self.closed(path, slot, SLOT_FIELDS)
-            self.string(path, slot.get("label"), f"secretSlots.{slot_id}.label", required=True, maximum=80)
-            self.string(
-                path, slot.get("description"), f"secretSlots.{slot_id}.description", required=True, maximum=512
-            )
-            if type(slot.get("required")) is not bool:
-                self.error(path, f"secretSlots.{slot_id}.required must be a boolean")
-            bindings = slot.get("bindings")
-            if not isinstance(bindings, list) or not bindings or len(bindings) > 32:
-                self.error(path, f"secretSlots.{slot_id}.bindings must contain 1-32 bindings")
-                continue
-            for index, binding in enumerate(bindings):
-                label = f"secretSlots.{slot_id}.bindings[{index}]"
-                if not isinstance(binding, dict):
-                    self.error(path, f"{label} must be an object")
-                    continue
-                self.closed(path, binding, BINDING_FIELDS)
-                server = binding.get("server")
-                target = binding.get("target")
-                name = binding.get("name")
-                if not isinstance(server, str) or server not in self.server_types:
-                    self.error(path, f"{label}.server must reference a valid MCP server")
-                    continue
-                if target not in {"env", "header"}:
-                    self.error(path, f"{label}.target must be env or header")
-                    continue
-                expected_type = "stdio" if target == "env" else "remote"
-                actual_type = "stdio" if self.server_types[server] == "stdio" else "remote"
-                if actual_type != expected_type:
-                    self.error(path, f"{label} target is incompatible with MCP server transport")
-                if target == "env":
-                    if not isinstance(name, str) or not ENV_KEY_RE.fullmatch(name):
-                        self.error(path, f"{label}.name must be a valid environment key")
-                    elif name.upper() in {"PLUGIN_ROOT", "PLUGIN_DATA"}:
-                        self.error(path, f"{label}.name targets a client-owned environment key")
-                    if "prefix" in binding:
-                        self.error(path, f"{label}.prefix is only allowed for header bindings")
-                else:
-                    if not isinstance(name, str) or not HEADER_NAME_RE.fullmatch(name):
-                        self.error(path, f"{label}.name must be a valid HTTP header name")
-                    if "prefix" in binding:
-                        prefix = binding["prefix"]
-                        if not isinstance(prefix, str) or len(prefix) > 64 or not _valid_header_value(prefix):
-                            self.error(path, f"{label}.prefix must be a bounded non-secret header prefix")
-                        elif _contains_secret_material(prefix):
-                            self.error(path, f"{label}.prefix must not contain credential material")
-                if isinstance(name, str):
-                    if name.casefold() in self.configured_targets[server][target]:
-                        self.error(path, f"{label} target must not also have a literal MCP value")
-                    binding_target = (server, target, name.casefold())
-                    if binding_target in bound_targets:
-                        self.error(path, f"{label} duplicates another secret binding target")
-                    else:
-                        bound_targets.add(binding_target)
-
 
 def _looks_secret(value: str) -> bool:
     lowered = value.strip().lower()

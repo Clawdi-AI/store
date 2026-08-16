@@ -64,24 +64,6 @@ def make_plugin(parent: Path) -> Path:
                         "category": "productivity",
                         "languages": ["en", "zh-CN"],
                     },
-                    "configuration": {
-                        "secretSlots": {
-                            "service-token": {
-                                "label": "Service token",
-                                "description": "Token used by both MCP services.",
-                                "required": True,
-                                "bindings": [
-                                    {"server": "local", "target": "env", "name": "SERVICE_TOKEN"},
-                                    {
-                                        "server": "remote",
-                                        "target": "header",
-                                        "name": "Authorization",
-                                        "prefix": "Bearer ",
-                                    },
-                                ],
-                            }
-                        }
-                    },
                     "compatibility": {
                         "runtimes": ["openclaw", "hermes"],
                         "executables": ["python3"],
@@ -114,7 +96,7 @@ def make_plugin(parent: Path) -> Path:
 
 
 class PluginValidationTests(unittest.TestCase):
-    def test_valid_skill_stdio_remote_and_secret_bindings(self) -> None:
+    def test_valid_skill_stdio_and_remote_mcp(self) -> None:
         with temporary_directory(".store-plugin-test-") as temporary:
             root = make_plugin(Path(temporary))
             report = validate_plugin(root, Path(temporary))
@@ -127,11 +109,6 @@ class PluginValidationTests(unittest.TestCase):
     def test_portable_mcp_transports_names_and_url_fragments(self) -> None:
         with temporary_directory(".store-plugin-test-") as temporary:
             root = make_plugin(Path(temporary))
-            manifest = read_json(root / "plugin.json")
-            manifest["extensions"]["ai.clawdi"]["configuration"]["secretSlots"][
-                "service-token"
-            ]["bindings"][1]["server"] = "Remote Tools"
-            write_json(root / "plugin.json", manifest)
             document = read_json(root / "mcp.json")
             document["mcpServers"]["Remote Tools"] = document["mcpServers"].pop("remote")
             document["mcpServers"]["Legacy SSE"] = {
@@ -195,7 +172,7 @@ class PluginValidationTests(unittest.TestCase):
             )
 
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
-            self.assertIn("Agent v2 Store validation passed (1 plugin(s)).", result.stdout)
+            self.assertIn("Agent v2 Store validation passed (0 plugin(s)).", result.stdout)
 
     def test_store_scanner_rejects_non_directory_entries(self) -> None:
         with temporary_directory(".store-plugin-test-") as temporary:
@@ -225,6 +202,11 @@ class PluginValidationTests(unittest.TestCase):
             document["mcpServers"]["local"]["env"]["API_TOKEN"] = "committed-value"
             write_json(root / "mcp.json", document)
 
+        def literal_auth_header(root: Path) -> None:
+            document = read_json(root / "mcp.json")
+            document["mcpServers"]["remote"]["headers"]["Authorization"] = "Bearer committed-value"
+            write_json(root / "mcp.json", document)
+
         def author_trust(root: Path) -> None:
             document = read_json(root / "plugin.json")
             document["extensions"]["ai.clawdi"]["trust"] = "verified"
@@ -250,13 +232,9 @@ class PluginValidationTests(unittest.TestCase):
             document["mcpServers"]["local"]["env"]["PLUGIN_DATA"] = "./data"
             write_json(root / "mcp.json", document)
 
-        def incompatible_binding(root: Path) -> None:
+        def author_configuration(root: Path) -> None:
             document = read_json(root / "plugin.json")
-            binding = document["extensions"]["ai.clawdi"]["configuration"]["secretSlots"]["service-token"][
-                "bindings"
-            ][0]
-            binding["target"] = "header"
-            binding["name"] = "Authorization"
+            document["extensions"]["ai.clawdi"]["configuration"] = {}
             write_json(root / "plugin.json", document)
 
         def bad_skill_name(root: Path) -> None:
@@ -269,13 +247,14 @@ class PluginValidationTests(unittest.TestCase):
         cases: list[tuple[str, Callable[[Path], None], str]] = [
             ("semver", invalid_version, "exact Semantic Versioning"),
             ("cwd escape", unsafe_cwd, "cwd escapes"),
-            ("literal secret", literal_secret, "secret slot binding"),
+            ("literal secret", literal_secret, "public non-secret literal"),
+            ("literal auth header", literal_auth_header, "public non-secret literal"),
             ("author trust", author_trust, "unknown field: trust"),
             ("canonical schema", wrong_schema, "$schema must equal"),
             ("closed transport", mixed_transport_fields, "unknown field: url"),
             ("null optional", null_optional_field, "headers must be an object"),
             ("reserved environment", reserved_environment, "client-owned"),
-            ("binding transport", incompatible_binding, "incompatible with MCP server transport"),
+            ("author configuration", author_configuration, "unknown field: configuration"),
             ("skill directory", bad_skill_name, "frontmatter name must match"),
         ]
         for label, mutate, expected in cases:
