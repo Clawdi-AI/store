@@ -58,7 +58,6 @@ class CatalogTests(unittest.TestCase):
 
         self.assertEqual(["alpha", "zulu"], [entry["name"] for entry in catalog["plugins"]])
         self.assertEqual(render_catalog(catalog), render_catalog(generate_catalog([alpha, zulu])))
-        self.assertEqual([False, False], [entry["hasConfiguration"] for entry in catalog["plugins"]])
         self.assertEqual(
             {"skills": ["alpha-skill"], "mcpServers": {"alpha-server": "stdio"}},
             catalog["plugins"][0]["components"],
@@ -76,9 +75,6 @@ class CatalogTests(unittest.TestCase):
         invalid["plugins"][0]["keywords"] = ["bad\x7fname"]
         self.assertIn("ASCII control characters", "\n".join(validate_catalog(invalid)))
         invalid["plugins"][0]["keywords"] = ["alpha"]
-        invalid["plugins"][0]["hasConfiguration"] = True
-        self.assertIn("plugins[0].hasConfiguration must equal false", validate_catalog(invalid))
-        invalid["plugins"][0]["hasConfiguration"] = False
         invalid["plugins"][0]["components"]["details"] = {}
         self.assertIn("plugins[0].components has unknown field: details", validate_catalog(invalid))
         invalid["plugins"][0]["components"].pop("details")

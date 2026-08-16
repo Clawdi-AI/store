@@ -31,7 +31,6 @@
     },
     "description": "Official Sui development guidance and documentation access for coding agents.",
     "displayName": "Sui Development",
-    "hasConfiguration": false,
     "keywords": [
       "sui",
       "move",

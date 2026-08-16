@@ -124,16 +124,14 @@ The closed `schemaVersion: 2` entry is a normalized listing and resolution
 projection. It contains package `name` and `version`; `displayName`, optional
 `description` and `publisher`, `category`, standard `keywords`, and `languages`;
 declared `runtimes`; a closed `source` and optional in-Store `icon`; the
-`sha256-tree-v1` `digest`;
-`hasConfiguration`; and a closed `components` summary. `components.skills`
+`sha256-tree-v1` `digest`; and a closed `components` summary. `components.skills`
 contains exact Skill names, while `components.mcpServers` maps exact server
 names to declared `stdio`, `streamable-http`, or `sse` transports. It contains
 no Skill bodies or descriptions and no MCP URLs, headers, commands, or
 configuration data. Catalog-facing human strings and array items cannot
 contain ASCII control characters or DEL.
 
-`hasConfiguration` is retained for catalog schema compatibility and is always
-`false`. Packages cannot declare `extensions["ai.clawdi"].configuration`.
+Packages cannot declare `extensions["ai.clawdi"].configuration`.
 
 For authored packages, `source.type: "store"` contains a path relative to the
 directory containing `v2/catalog.json`; consumers bind it to the resolved Store

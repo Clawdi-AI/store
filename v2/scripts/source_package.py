@@ -483,7 +483,6 @@ def _catalog_projection(report: PluginReport) -> JsonObject:
         "keywords": list(manifest["keywords"]),
         "languages": list(display["languages"]),
         "runtimes": list(compatibility.get("runtimes", [])),
-        "hasConfiguration": False,
         "components": {
             "skills": list(report.skills),
             "mcpServers": dict(report.mcp_servers),

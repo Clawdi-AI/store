@@ -13,7 +13,6 @@
       "description": "Cetus Protocol development guidance for swaps, CLMM, and DLMM on Sui.",
       "digest": "sha256-tree-v1:015fd5cb641dae43479e500e65f0582831f81051ccc7c26579137e38ee8ec721",
       "displayName": "Cetus Protocol",
-      "hasConfiguration": false,
       "keywords": [
         "cetus",
         "sui",
@@ -70,7 +69,6 @@
       "description": "Official Sui development guidance and documentation access for coding agents.",
       "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
       "displayName": "Sui Development",
-      "hasConfiguration": false,
       "keywords": [
         "sui",
         "move",
