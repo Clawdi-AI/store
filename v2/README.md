@@ -71,9 +71,9 @@ Store validation accepts all three standard transports independently of a
 runtime's connection capabilities. `compatibility.runtimes` names intended
 install targets; it is not a transport capability matrix or proof that every
 component can run there. Installers and runtimes must gate unsupported
-`streamable-http`, legacy `sse`, and secret-binding behavior without treating
-the portable package as invalid. In particular, this Store contract does not
-claim Hermes support for `sse` or `configuration.secretSlots`.
+`streamable-http` and legacy `sse` behavior without treating the portable
+package as invalid. In particular, this Store contract does not claim Hermes
+support for `sse`.
 
 ## Clawdi extension
 
@@ -83,21 +83,16 @@ claim Hermes support for `sse` or `configuration.secretSlots`.
 - `display` requires `name`, `category`, and `languages`; `icon` is an optional
   in-package `./` file. The Store requires the standard top-level `keywords`
   field for search and discovery instead of duplicating tags in the extension.
-- `configuration.secretSlots` maps slot IDs to `label`, `description`,
-  `required`, and one or more MCP bindings. Bindings target an existing stdio
-  environment key or remote header and may add a bounded, non-secret header
-  prefix.
 - `compatibility` may list only `openclaw` and `hermes` runtimes and bare
   `executables`. If either list is present, it must not be empty.
 
 Secret values, trust or review state, featured ranking, install counts,
-arbitrary settings, install hooks, OAuth registration, and dependency
-installers are not author-controlled extension data. Literal credential-bearing
-MCP environment or header values are rejected; declare credentials as secret
-slots only for targets that implement this Clawdi extension. Agent Plugins
-1.0.0 defines no portable `secretRefs` field. For protected remote MCP servers,
-standard MCP Authorization is performed by the MCP client and managed by its
-host/runtime, not declared as Store package authentication metadata.
+arbitrary settings, configuration, install hooks, OAuth registration, and
+dependency installers are not author-controlled extension data. Values
+committed in standard MCP `env` or `headers` fields must be public and
+non-secret. For protected remote MCP servers, standard MCP Authorization is
+performed by the MCP client and managed by its host/runtime, not declared as
+Store package authentication metadata.
 
 ## Generated Store index
 
@@ -115,14 +110,12 @@ declared `runtimes`; `path` and optional `icon`; the `sha256-tree-v1` `digest`;
 `hasConfiguration`; and a closed `components` summary. `components.skills`
 contains exact Skill names, while `components.mcpServers` maps exact server
 names to declared `stdio`, `streamable-http`, or `sse` transports. It contains
-no Skill bodies or descriptions and no MCP URLs, headers, commands, or config
-bindings. Catalog-facing human strings and array items cannot contain ASCII
-control characters or DEL.
+no Skill bodies or descriptions and no MCP URLs, headers, commands, or
+configuration data. Catalog-facing human strings and array items cannot
+contain ASCII control characters or DEL.
 
-`hasConfiguration` is derived only from the presence of
-`extensions["ai.clawdi"].configuration`; it never copies secret slot bindings
-or values. The current Clawdi native adapter must not offer entries with
-`hasConfiguration: true` until it supports that object.
+`hasConfiguration` is retained for catalog schema compatibility and is always
+`false`. Packages cannot declare `extensions["ai.clawdi"].configuration`.
 
 The index contains no Git commit. `path` is resolved relative to the directory
 containing `v2/catalog.json`, so `./plugins/example-plugin` selects
@@ -189,5 +182,5 @@ explicitly Clawdi-owned.
 - [MCP schema 1.0.0](https://agent-plugins.org/schemas/1.0.0/mcp.schema.json)
 - [Loading and discovery](https://agent-plugins.org/client-implementers/loading-and-discovery.md)
 - [MCP runtime](https://agent-plugins.org/client-implementers/mcp-runtime.md)
-- [MCP Authorization](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
+- [MCP Authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
 - [Agent Skills specification](https://agentskills.io/specification.md)

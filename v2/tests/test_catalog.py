@@ -22,7 +22,6 @@ def make_report(
     digest: str,
     *,
     version: str = "1.0.0",
-    has_configuration: bool = False,
 ) -> PluginReport:
     extension = {
         "schemaVersion": 1,
@@ -33,8 +32,6 @@ def make_report(
         },
         "compatibility": {"runtimes": ["openclaw"]},
     }
-    if has_configuration:
-        extension["configuration"] = {"secretSlots": {}}
     manifest = {
         "$schema": PLUGIN_SCHEMA,
         "name": name,
@@ -55,14 +52,13 @@ def make_report(
 class CatalogTests(unittest.TestCase):
     def test_generation_is_deterministic_and_validation_rejects_drift(self) -> None:
         alpha = make_report("alpha", "a" * 64)
-        zulu = make_report("zulu", "f" * 64, has_configuration=True)
+        zulu = make_report("zulu", "f" * 64)
 
         catalog = generate_catalog([zulu, alpha])
 
         self.assertEqual(["alpha", "zulu"], [entry["name"] for entry in catalog["plugins"]])
         self.assertEqual(render_catalog(catalog), render_catalog(generate_catalog([alpha, zulu])))
-        self.assertFalse(catalog["plugins"][0]["hasConfiguration"])
-        self.assertTrue(catalog["plugins"][1]["hasConfiguration"])
+        self.assertEqual([False, False], [entry["hasConfiguration"] for entry in catalog["plugins"]])
         self.assertEqual(
             {"skills": ["alpha-skill"], "mcpServers": {"alpha-server": "stdio"}},
             catalog["plugins"][0]["components"],
@@ -76,6 +72,9 @@ class CatalogTests(unittest.TestCase):
         invalid["plugins"][0]["keywords"] = ["bad\x7fname"]
         self.assertIn("ASCII control characters", "\n".join(validate_catalog(invalid)))
         invalid["plugins"][0]["keywords"] = ["alpha"]
+        invalid["plugins"][0]["hasConfiguration"] = True
+        self.assertIn("plugins[0].hasConfiguration must equal false", validate_catalog(invalid))
+        invalid["plugins"][0]["hasConfiguration"] = False
         invalid["plugins"][0]["components"]["details"] = {}
         self.assertIn("plugins[0].components has unknown field: details", validate_catalog(invalid))
         invalid["plugins"][0]["components"].pop("details")

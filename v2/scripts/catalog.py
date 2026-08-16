@@ -96,7 +96,7 @@ def _catalog_entry(report: PluginReport) -> dict[str, Any]:
         "keywords": list(manifest["keywords"]),
         "languages": list(display["languages"]),
         "runtimes": list(compatibility.get("runtimes", [])),
-        "hasConfiguration": "configuration" in extension,
+        "hasConfiguration": False,
         "path": f"./plugins/{report.key}",
         "digest": f"{DIGEST_PREFIX}{report.digest}",
         "components": {
@@ -268,8 +268,8 @@ def validate_catalog(catalog: Any) -> list[str]:
                     f"{context}.runtimes contains unsupported values: "
                     + ", ".join(sorted(unknown_runtimes))
                 )
-        if type(entry.get("hasConfiguration")) is not bool:
-            errors.append(f"{context}.hasConfiguration must be a boolean")
+        if entry.get("hasConfiguration") is not False:
+            errors.append(f"{context}.hasConfiguration must equal false")
         components = entry.get("components")
         if not isinstance(components, dict):
             errors.append(f"{context}.components must be an object")
