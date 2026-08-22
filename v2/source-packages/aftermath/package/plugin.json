@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "aftermath",
   "version": "0.1.0",
-  "description": "Aftermath Finance SDK and API integration guidance with hosted MCP access.",
+  "description": "Agentic skills for integrating with Aftermath Finance.",
   "author": {
     "name": "Aftermath Finance",
     "url": "https://aftermath.finance"

@@ -140,42 +140,40 @@ class SourcePackageTests(unittest.TestCase):
                     },
                 },
             )
-            write_json(
-                root / "recipe.json",
-                {
-                    "schemaVersion": 2,
-                    "artifact": {
-                        "repository": "https://github.com/Clawdi-AI/store",
-                        "tag": "agent-plugin-example-v0.1.0",
-                        "asset": "example-0.1.0.tar.gz",
-                    },
-                    "upstreams": [
-                        {
-                            "repository": "https://github.com/example/skills",
-                            "commit": "a" * 40,
-                            "mappings": [
-                                {
-                                    "source": "skill",
-                                    "target": "skills/example-skill",
-                                    "frontmatter": {
-                                        "unknownFields": "metadata",
-                                        "metadataValues": "json-string",
-                                    },
-                                    "replacements": [
-                                        {
-                                            "path": "SKILL.md",
-                                            "old": "# Original Example",
-                                            "new": "# Example",
-                                            "count": 1,
-                                        }
-                                    ],
-                                }
-                            ],
-                            "assets": [{"source": "LICENSE", "target": "LICENSE"}],
-                        }
-                    ],
+            recipe_document = {
+                "schemaVersion": 2,
+                "artifact": {
+                    "repository": "https://github.com/Clawdi-AI/store",
+                    "tag": "agent-plugin-example-v0.1.0",
+                    "asset": "example-0.1.0.tar.gz",
                 },
-            )
+                "upstreams": [
+                    {
+                        "repository": "https://github.com/example/skills",
+                        "commit": "a" * 40,
+                        "mappings": [
+                            {
+                                "source": "skill",
+                                "target": "skills/example-skill",
+                                "frontmatter": {
+                                    "unknownFields": "metadata",
+                                    "metadataValues": "json-string",
+                                },
+                                "replacements": [
+                                    {
+                                        "path": "SKILL.md",
+                                        "old": "# Original Example",
+                                        "new": "# Example",
+                                        "count": 1,
+                                    }
+                                ],
+                            }
+                        ],
+                        "assets": [{"source": "LICENSE", "target": "LICENSE"}],
+                    }
+                ],
+            }
+            write_json(root / "recipe.json", recipe_document)
             recipe = load_recipe(root / "recipe.json")
 
             first = build_source_package(
@@ -207,6 +205,24 @@ class SourcePackageTests(unittest.TestCase):
                 [{"source": "LICENSE", "target": "LICENSE"}],
                 provenance["sources"][0]["assets"],
             )
+
+            mapping = recipe_document["upstreams"][0]["mappings"][0]
+            mapping["replacements"][0]["count"] = 2
+            write_json(root / "recipe.json", recipe_document)
+            with self.assertRaisesRegex(SourcePackageError, "expected 2 occurrence"):
+                build_source_package(
+                    load_recipe(root / "recipe.json"),
+                    fetcher=lambda _: upstream_archive(nonstandard=True),
+                )
+
+            mapping["frontmatter"] = {"unknownFields": "metadata"}
+            mapping.pop("replacements")
+            recipe_document["upstreams"][0].pop("assets")
+            write_json(root / "recipe.json", recipe_document)
+            with self.assertRaisesRegex(SourcePackageError, "did not change any fields"):
+                build_source_package(
+                    load_recipe(root / "recipe.json"), fetcher=lambda _: upstream_archive()
+                )
 
 
 if __name__ == "__main__":

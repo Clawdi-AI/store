@@ -47,13 +47,13 @@
       "openclaw",
       "hermes"
     ],
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
-  "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
+  "digest": "sha256-tree-v1:315af97b91b0575ee2e5aaecb5848ac43e0e0436226a15b01b5a66c9ec9f9865",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:a9364b27efea274693e0ef7f7a5b56974f020c261876aade22f64df6e8975f24",
+    "archiveDigest": "sha256:b727ba6640199936c32d655f2e881b40d12cc71928d131fa221f2b4dcd8401e5",
     "type": "github-release",
-    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.1.0/sui-0.1.0.tar.gz"
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.2.0/sui-0.2.0.tar.gz"
   }
 }

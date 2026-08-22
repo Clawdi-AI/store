@@ -596,6 +596,7 @@ def _normalize_skill_frontmatter(
     else:
         raise SourcePackageError(f"{context} metadata must be a string-keyed mapping")
 
+    changed = False
     if normalization.unknown_fields == "metadata":
         for field_name in list(frontmatter):
             if not isinstance(field_name, str):
@@ -608,12 +609,17 @@ def _normalize_skill_frontmatter(
             metadata[metadata_name] = _metadata_string(
                 frontmatter.pop(field_name), context=f"{context}.{field_name}"
             )
+            changed = True
 
     if normalization.metadata_values == "json-string":
+        changed = changed or any(not isinstance(value, str) for value in metadata.values())
         metadata = {
             key: _metadata_string(value, context=f"{context}.metadata.{key}")
             for key, value in metadata.items()
         }
+
+    if not changed:
+        raise SourcePackageError(f"{context} frontmatter normalization did not change any fields")
 
     if metadata:
         frontmatter["metadata"] = metadata

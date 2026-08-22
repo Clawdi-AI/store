@@ -9,8 +9,9 @@ the resulting archive and package-tree digests.
 Schema 1 recipes preserve mapped Skill bytes. Schema 2 additionally supports
 pinned package assets, explicit frontmatter normalization, and counted text
 replacements for upstream packages that need a deterministic standards
-projection. These operations are reproduced in `SOURCES.json`; they do not
-relax final package validation.
+projection. Unknown fields move to `upstream.<field>` metadata keys, and
+no-op normalization declarations fail the build. These operations are
+reproduced in `SOURCES.json`; they do not relax final package validation.
 
 Build and verify all recipes with:
 

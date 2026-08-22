@@ -13,12 +13,14 @@
         "walrus-overview",
         "walrus-quilts",
         "walrus-sites",
+        "walrus-sites-portal",
+        "walrus-sites-publishing",
         "walrus-storage-costs",
         "walrus-troubleshooting",
         "walrus-ts-sdk"
       ]
     },
-    "description": "Complete Walrus guidance for decentralized storage, SDKs, sites, encryption, and agent memory on Sui.",
+    "description": "Reusable agent skills for building on Walrus, the decentralized storage protocol built on Sui.",
     "displayName": "Walrus",
     "keywords": [
       "walrus",
@@ -38,10 +40,10 @@
     ],
     "version": "0.1.0"
   },
-  "digest": "sha256-tree-v1:f9744b4a9b06f26bda983f088c577071c6b4a2ccea89f0a7ceb05e33af578b14",
+  "digest": "sha256-tree-v1:eff48814c7226fb236b297832cab39b7ac48ad45c5b699b50e3387558163d5fc",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:7a10021eeef05e7563a45ef2e69ea2ca17cb566811e21255e9f3e033b2e9a6ca",
+    "archiveDigest": "sha256:69776a9c35545a2addbb490449f86ed57e239e29d68bd1eb8ed4538b2f996d57",
     "type": "github-release",
     "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-walrus-v0.1.0/walrus-0.1.0.tar.gz"
   }

@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "navi",
   "version": "0.1.0",
-  "description": "NAVI Protocol guidance for Sui DeFi SDK development and defi-agent-cli workflows.",
+  "description": "AI agent skills for building Sui DeFi applications with the NAVI Protocol SDK and defi-agent-cli.",
   "author": {
     "name": "NAVI Protocol",
     "url": "https://naviprotocol.io"

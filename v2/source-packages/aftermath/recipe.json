@@ -19,12 +19,32 @@
               "old": "../api/SKILL.md",
               "new": "../aftermath-perpetuals/SKILL.md",
               "count": 2
+            },
+            {
+              "path": "references/packages.md",
+              "old": "../../api/",
+              "new": "../../aftermath-perpetuals/",
+              "count": 2
+            },
+            {
+              "path": "references/perpetuals.md",
+              "old": "../../api/",
+              "new": "../../aftermath-perpetuals/",
+              "count": 2
             }
           ]
         },
         {
           "source": "skills/api",
-          "target": "skills/aftermath-perpetuals"
+          "target": "skills/aftermath-perpetuals",
+          "replacements": [
+            {
+              "path": "SKILL.md",
+              "old": "skills/api/",
+              "new": "skills/aftermath-perpetuals/",
+              "count": 4
+            }
+          ]
         },
         {
           "source": "skills/gas",

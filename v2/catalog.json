@@ -12,8 +12,8 @@
           "sui-move-gas-optimization"
         ]
       },
-      "description": "Aftermath Finance SDK and API integration guidance with hosted MCP access.",
-      "digest": "sha256-tree-v1:dd416c8e84d8e98d5669aa56976b16a04d915e4a9071a4762c939987a1b337af",
+      "description": "Agentic skills for integrating with Aftermath Finance.",
+      "digest": "sha256-tree-v1:d766205faa1a57926b72386c9c4525aa89122d769c79554eb50c50ce8d779322",
       "displayName": "Aftermath Finance",
       "keywords": [
         "aftermath",
@@ -32,7 +32,7 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:1ee60737fb4bcafb2b11670422b6eae9a2bc6a9130e2d817f1fecf54523931b2",
+        "archiveDigest": "sha256:6c2b460eea5bc0a2a3d6567d8a8cfbd300056cb83ff81a3c7bc96724d7596bac",
         "type": "github-release",
         "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-aftermath-v0.1.0/aftermath-0.1.0.tar.gz"
       },
@@ -83,8 +83,8 @@
           "navi-sdk"
         ]
       },
-      "description": "NAVI Protocol guidance for Sui DeFi SDK development and defi-agent-cli workflows.",
-      "digest": "sha256-tree-v1:3764f23e152739fdc6e3f8077672b611ad4cbc28a3af2b3df758204ec222f3d1",
+      "description": "AI agent skills for building Sui DeFi applications with the NAVI Protocol SDK and defi-agent-cli.",
+      "digest": "sha256-tree-v1:41529fdccd9fe447b3c5aeaa6117974a5a565b4bfe561ca871664d86e8d64fa7",
       "displayName": "NAVI Protocol",
       "keywords": [
         "navi",
@@ -103,7 +103,7 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:28c75997cc671e8d1179207b22db37ee5ac970c50196109e47b6addbc5723c21",
+        "archiveDigest": "sha256:26f1bec0ca2fd83334a56812adb73a116071b71ecca37a3f94cb6bb665fd9897",
         "type": "github-release",
         "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-navi-v0.1.0/navi-0.1.0.tar.gz"
       },
@@ -138,8 +138,8 @@
           "scallop-xoracle-integration"
         ]
       },
-      "description": "Complete Scallop Protocol guidance for lending, staking, governance, and SDK integration on Sui.",
-      "digest": "sha256-tree-v1:d49d5f637e1dd52502fbd784e9c2e2742597106acff7195ff7c38f2cbff70d33",
+      "description": "Complete AI skills for Scallop Protocol on Sui - lending, staking, governance, and more.",
+      "digest": "sha256-tree-v1:d6a4b10296c323cb14e4c3475806ed5f4514eab9987eaebd491a768ffd285d82",
       "displayName": "Scallop Protocol",
       "keywords": [
         "scallop",
@@ -158,7 +158,7 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:9d6e07932354ff013bc89cf7fb6f907a84cf5efa4eb7c757102e5b4a47d6a449",
+        "archiveDigest": "sha256:e51fe5994e5d2c1af9f8c4db00dfab084a11823308214ae86fe73d906e6e9392",
         "type": "github-release",
         "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-scallop-v0.1.0/scallop-0.1.0.tar.gz"
       },
@@ -195,7 +195,7 @@
         ]
       },
       "description": "Official Sui development guidance and documentation access for coding agents.",
-      "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
+      "digest": "sha256-tree-v1:315af97b91b0575ee2e5aaecb5848ac43e0e0436226a15b01b5a66c9ec9f9865",
       "displayName": "Sui Development",
       "keywords": [
         "sui",
@@ -214,11 +214,11 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:a9364b27efea274693e0ef7f7a5b56974f020c261876aade22f64df6e8975f24",
+        "archiveDigest": "sha256:b727ba6640199936c32d655f2e881b40d12cc71928d131fa221f2b4dcd8401e5",
         "type": "github-release",
-        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.1.0/sui-0.1.0.tar.gz"
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.2.0/sui-0.2.0.tar.gz"
       },
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     {
       "category": "developer-tools",
@@ -243,8 +243,8 @@
           "walrus"
         ]
       },
-      "description": "t2000 Agent Wallet and Sui ecosystem guidance for payments, DeFi, identity, storage, and secure Move development.",
-      "digest": "sha256-tree-v1:a05e486097eb41af5022d66109de7c8455804660305f4b85fb7e61a831778d8e",
+      "description": "t2000's open source skills for Agentic finance development.",
+      "digest": "sha256-tree-v1:cccae662cbb5d7b646dcfba6a2b9603a81faa623dac4aebf0fb1aadcaf433a2b",
       "displayName": "t2000 Agent Wallet",
       "keywords": [
         "t2000",
@@ -263,7 +263,7 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:ed612ea7414a1229f2c036447eb7819b96e1462223f1a5799915b418b6556d13",
+        "archiveDigest": "sha256:2040d1150158e2486d89a773023177c51a1f5b612e74b28a284b4e3d03c6cdfc",
         "type": "github-release",
         "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
       },
@@ -283,13 +283,15 @@
           "walrus-overview",
           "walrus-quilts",
           "walrus-sites",
+          "walrus-sites-portal",
+          "walrus-sites-publishing",
           "walrus-storage-costs",
           "walrus-troubleshooting",
           "walrus-ts-sdk"
         ]
       },
-      "description": "Complete Walrus guidance for decentralized storage, SDKs, sites, encryption, and agent memory on Sui.",
-      "digest": "sha256-tree-v1:f9744b4a9b06f26bda983f088c577071c6b4a2ccea89f0a7ceb05e33af578b14",
+      "description": "Reusable agent skills for building on Walrus, the decentralized storage protocol built on Sui.",
+      "digest": "sha256-tree-v1:eff48814c7226fb236b297832cab39b7ac48ad45c5b699b50e3387558163d5fc",
       "displayName": "Walrus",
       "keywords": [
         "walrus",
@@ -308,7 +310,7 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:7a10021eeef05e7563a45ef2e69ea2ca17cb566811e21255e9f3e033b2e9a6ca",
+        "archiveDigest": "sha256:69776a9c35545a2addbb490449f86ed57e239e29d68bd1eb8ed4538b2f996d57",
         "type": "github-release",
         "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-walrus-v0.1.0/walrus-0.1.0.tar.gz"
       },

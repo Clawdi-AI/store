@@ -22,7 +22,7 @@
         "walrus"
       ]
     },
-    "description": "t2000 Agent Wallet and Sui ecosystem guidance for payments, DeFi, identity, storage, and secure Move development.",
+    "description": "t2000's open source skills for Agentic finance development.",
     "displayName": "t2000 Agent Wallet",
     "keywords": [
       "t2000",
@@ -42,10 +42,10 @@
     ],
     "version": "0.1.0"
   },
-  "digest": "sha256-tree-v1:a05e486097eb41af5022d66109de7c8455804660305f4b85fb7e61a831778d8e",
+  "digest": "sha256-tree-v1:cccae662cbb5d7b646dcfba6a2b9603a81faa623dac4aebf0fb1aadcaf433a2b",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:ed612ea7414a1229f2c036447eb7819b96e1462223f1a5799915b418b6556d13",
+    "archiveDigest": "sha256:2040d1150158e2486d89a773023177c51a1f5b612e74b28a284b4e3d03c6cdfc",
     "type": "github-release",
     "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
   }

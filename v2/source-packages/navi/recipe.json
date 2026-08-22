@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "artifact": {
     "repository": "https://github.com/Clawdi-AI/store",
     "tag": "agent-plugin-navi-v0.1.0",
@@ -17,6 +17,12 @@
         {
           "source": "skills/navi-sdk",
           "target": "skills/navi-sdk"
+        }
+      ],
+      "assets": [
+        {
+          "source": "LICENSE",
+          "target": "LICENSE"
         }
       ]
     }

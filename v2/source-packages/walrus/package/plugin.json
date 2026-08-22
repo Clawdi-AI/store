@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "walrus",
   "version": "0.1.0",
-  "description": "Complete Walrus guidance for decentralized storage, SDKs, sites, encryption, and agent memory on Sui.",
+  "description": "Reusable agent skills for building on Walrus, the decentralized storage protocol built on Sui.",
   "author": {
     "name": "Mysten Labs",
     "url": "https://www.mystenlabs.com"

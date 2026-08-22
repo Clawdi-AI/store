@@ -11,7 +11,7 @@
         "sui-move-gas-optimization"
       ]
     },
-    "description": "Aftermath Finance SDK and API integration guidance with hosted MCP access.",
+    "description": "Agentic skills for integrating with Aftermath Finance.",
     "displayName": "Aftermath Finance",
     "keywords": [
       "aftermath",
@@ -31,10 +31,10 @@
     ],
     "version": "0.1.0"
   },
-  "digest": "sha256-tree-v1:dd416c8e84d8e98d5669aa56976b16a04d915e4a9071a4762c939987a1b337af",
+  "digest": "sha256-tree-v1:d766205faa1a57926b72386c9c4525aa89122d769c79554eb50c50ce8d779322",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:1ee60737fb4bcafb2b11670422b6eae9a2bc6a9130e2d817f1fecf54523931b2",
+    "archiveDigest": "sha256:6c2b460eea5bc0a2a3d6567d8a8cfbd300056cb83ff81a3c7bc96724d7596bac",
     "type": "github-release",
     "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-aftermath-v0.1.0/aftermath-0.1.0.tar.gz"
   }

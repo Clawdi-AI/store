@@ -108,9 +108,10 @@ Recipe schema 2 may also copy pinned supporting files or directories and apply
 declared Skill frontmatter normalization. Unknown upstream fields can be
 preserved under `metadata` and non-string metadata values can be serialized as
 canonical JSON strings. Exact text replacements require an expected occurrence
-count. Every transformation is recorded in the artifact's `SOURCES.json`; the
-result still passes the same Agent Plugins and Agent Skills validation as an
-unmodified source package.
+count. Moved fields use `upstream.<field>` metadata keys, and a declared
+normalization must make at least one semantic change. Every transformation is
+recorded in the artifact's `SOURCES.json`; the result still passes the same
+Agent Plugins and Agent Skills validation as an unmodified source package.
 
 Published release assets are immutable. The publish workflow creates a missing
 asset, treats an existing byte-identical asset as a no-op, and fails rather than

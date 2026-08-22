@@ -44,7 +44,33 @@
         },
         {
           "source": "walrus-sites",
-          "target": "skills/walrus-sites"
+          "target": "skills/walrus-sites",
+          "exclude": [
+            "portal",
+            "publishing"
+          ],
+          "replacements": [
+            {
+              "path": "SKILL.md",
+              "old": "publishing/SKILL.md",
+              "new": "../walrus-sites-publishing/SKILL.md",
+              "count": 1
+            },
+            {
+              "path": "SKILL.md",
+              "old": "portal/SKILL.md",
+              "new": "../walrus-sites-portal/SKILL.md",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "source": "walrus-sites/portal",
+          "target": "skills/walrus-sites-portal"
+        },
+        {
+          "source": "walrus-sites/publishing",
+          "target": "skills/walrus-sites-publishing"
         },
         {
           "source": "walrus-storage-costs",

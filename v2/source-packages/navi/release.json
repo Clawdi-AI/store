@@ -8,7 +8,7 @@
         "navi-sdk"
       ]
     },
-    "description": "NAVI Protocol guidance for Sui DeFi SDK development and defi-agent-cli workflows.",
+    "description": "AI agent skills for building Sui DeFi applications with the NAVI Protocol SDK and defi-agent-cli.",
     "displayName": "NAVI Protocol",
     "keywords": [
       "navi",
@@ -28,10 +28,10 @@
     ],
     "version": "0.1.0"
   },
-  "digest": "sha256-tree-v1:3764f23e152739fdc6e3f8077672b611ad4cbc28a3af2b3df758204ec222f3d1",
+  "digest": "sha256-tree-v1:41529fdccd9fe447b3c5aeaa6117974a5a565b4bfe561ca871664d86e8d64fa7",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:28c75997cc671e8d1179207b22db37ee5ac970c50196109e47b6addbc5723c21",
+    "archiveDigest": "sha256:26f1bec0ca2fd83334a56812adb73a116071b71ecca37a3f94cb6bb665fd9897",
     "type": "github-release",
     "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-navi-v0.1.0/navi-0.1.0.tar.gz"
   }

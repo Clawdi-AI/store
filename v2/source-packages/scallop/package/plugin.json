@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "scallop",
   "version": "0.1.0",
-  "description": "Complete Scallop Protocol guidance for lending, staking, governance, and SDK integration on Sui.",
+  "description": "Complete AI skills for Scallop Protocol on Sui - lending, staking, governance, and more.",
   "author": {
     "name": "Scallop",
     "url": "https://scallop.io"
