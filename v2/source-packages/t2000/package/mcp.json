@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "t2000": {
+      "type": "streamable-http",
+      "url": "https://mcp.t2000.ai/mcp"
+    }
+  }
+}

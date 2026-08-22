@@ -104,6 +104,15 @@ archive entries, validates the complete package, and reproduces a deterministic
 `.tar.gz` artifact. `release.json` binds its GitHub Release URL, archive SHA-256,
 package `sha256-tree-v1` digest, and catalog projection.
 
+Recipe schema 2 may also copy pinned supporting files or directories and apply
+declared Skill frontmatter normalization. Unknown upstream fields can be
+preserved under `metadata` and non-string metadata values can be serialized as
+canonical JSON strings. Exact text replacements require an expected occurrence
+count. Moved fields use `upstream.<field>` metadata keys, and a declared
+normalization must make at least one semantic change. Every transformation is
+recorded in the artifact's `SOURCES.json`; the result still passes the same
+Agent Plugins and Agent Skills validation as an unmodified source package.
+
 Published release assets are immutable. The publish workflow creates a missing
 asset, treats an existing byte-identical asset as a no-op, and fails rather than
 overwriting different bytes. Runtime clients verify both digests before native

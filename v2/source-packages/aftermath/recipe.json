@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 2,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-aftermath-v0.1.0",
+    "asset": "aftermath-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/AftermathFinance/skills",
+      "commit": "7b0e7f99b7741756bf63cfb0792fa0549908518f",
+      "mappings": [
+        {
+          "source": "skills/aftermath-ts-sdk",
+          "target": "skills/aftermath-ts-sdk",
+          "replacements": [
+            {
+              "path": "SKILL.md",
+              "old": "../api/SKILL.md",
+              "new": "../aftermath-perpetuals/SKILL.md",
+              "count": 2
+            },
+            {
+              "path": "references/packages.md",
+              "old": "../../api/",
+              "new": "../../aftermath-perpetuals/",
+              "count": 2
+            },
+            {
+              "path": "references/perpetuals.md",
+              "old": "../../api/",
+              "new": "../../aftermath-perpetuals/",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "source": "skills/api",
+          "target": "skills/aftermath-perpetuals",
+          "replacements": [
+            {
+              "path": "SKILL.md",
+              "old": "skills/api/",
+              "new": "skills/aftermath-perpetuals/",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "source": "skills/gas",
+          "target": "skills/sui-move-gas-optimization",
+          "frontmatter": {
+            "unknownFields": "metadata"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "source": "LICENSE",
+          "target": "LICENSE"
+        }
+      ]
+    }
+  ]
+}

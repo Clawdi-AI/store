@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-navi-v0.1.0",
+    "asset": "navi-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/naviprotocol/skills",
+      "commit": "482c388853d7a1e6a02f3df6f9d5fce08db9c324",
+      "mappings": [
+        {
+          "source": "skills/defi-agent-cli",
+          "target": "skills/defi-agent-cli"
+        },
+        {
+          "source": "skills/navi-sdk",
+          "target": "skills/navi-sdk"
+        }
+      ],
+      "assets": [
+        {
+          "source": "LICENSE",
+          "target": "LICENSE"
+        }
+      ]
+    }
+  ]
+}

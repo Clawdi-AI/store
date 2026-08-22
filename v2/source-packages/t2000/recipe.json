@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 2,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-t2000-v0.1.0",
+    "asset": "t2000-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/mission69b/t2000-skills",
+      "commit": "9f75c3d92b72879799d40e36b11dbb53d67f7dd0",
+      "mappings": [
+        {
+          "source": "skills/deepbook",
+          "target": "skills/deepbook"
+        },
+        {
+          "source": "skills/sui-grpc",
+          "target": "skills/sui-grpc"
+        },
+        {
+          "source": "skills/sui-move-security",
+          "target": "skills/sui-move-security"
+        },
+        {
+          "source": "skills/suins",
+          "target": "skills/suins"
+        },
+        {
+          "source": "skills/t2000-check-balance",
+          "target": "skills/t2000-check-balance"
+        },
+        {
+          "source": "skills/t2000-connect",
+          "target": "skills/t2000-connect"
+        },
+        {
+          "source": "skills/t2000-job",
+          "target": "skills/t2000-job",
+          "frontmatter": {
+            "unknownFields": "metadata"
+          }
+        },
+        {
+          "source": "skills/t2000-pay",
+          "target": "skills/t2000-pay",
+          "frontmatter": {
+            "unknownFields": "metadata"
+          }
+        },
+        {
+          "source": "skills/t2000-receive",
+          "target": "skills/t2000-receive"
+        },
+        {
+          "source": "skills/t2000-send",
+          "target": "skills/t2000-send"
+        },
+        {
+          "source": "skills/t2000-services",
+          "target": "skills/t2000-services"
+        },
+        {
+          "source": "skills/t2000-setup",
+          "target": "skills/t2000-setup"
+        },
+        {
+          "source": "skills/t2000-swap",
+          "target": "skills/t2000-swap"
+        },
+        {
+          "source": "skills/walrus",
+          "target": "skills/walrus"
+        }
+      ],
+      "assets": [
+        {
+          "source": "AGENTS.md",
+          "target": "AGENTS.md"
+        },
+        {
+          "source": "LICENSE.md",
+          "target": "LICENSE.md"
+        }
+      ]
+    }
+  ]
+}

@@ -1,26 +1,27 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "sui",
-  "version": "0.2.0",
-  "description": "Official Sui development guidance and documentation access for coding agents.",
+  "name": "scallop",
+  "version": "0.1.0",
+  "description": "Complete AI skills for Scallop Protocol on Sui - lending, staking, governance, and more.",
   "author": {
-    "name": "Mysten Labs",
-    "url": "https://www.mystenlabs.com"
+    "name": "Scallop",
+    "url": "https://scallop.io"
   },
-  "homepage": "https://docs.sui.io/skills",
-  "repository": "https://github.com/MystenLabs/skills",
+  "homepage": "https://scallop.io",
+  "repository": "https://github.com/scallop-io/scallop-skills",
+  "license": "MIT",
   "keywords": [
+    "scallop",
     "sui",
-    "move",
-    "blockchain",
-    "smart-contracts",
-    "sdk"
+    "defi",
+    "lending",
+    "staking"
   ],
   "extensions": {
     "ai.clawdi": {
       "schemaVersion": 1,
       "display": {
-        "name": "Sui Development",
+        "name": "Scallop Protocol",
         "category": "developer-tools",
         "languages": [
           "en"

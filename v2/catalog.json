@@ -3,6 +3,44 @@
     {
       "category": "developer-tools",
       "components": {
+        "mcpServers": {
+          "aftermath-api": "streamable-http"
+        },
+        "skills": [
+          "aftermath-perpetuals",
+          "aftermath-ts-sdk",
+          "sui-move-gas-optimization"
+        ]
+      },
+      "description": "Agentic skills for integrating with Aftermath Finance.",
+      "digest": "sha256-tree-v1:d766205faa1a57926b72386c9c4525aa89122d769c79554eb50c50ce8d779322",
+      "displayName": "Aftermath Finance",
+      "keywords": [
+        "aftermath",
+        "sui",
+        "defi",
+        "perpetuals",
+        "sdk"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "aftermath",
+      "publisher": "Aftermath Finance",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:6c2b460eea5bc0a2a3d6567d8a8cfbd300056cb83ff81a3c7bc96724d7596bac",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-aftermath-v0.1.0/aftermath-0.1.0.tar.gz"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "category": "developer-tools",
+      "components": {
         "mcpServers": {},
         "skills": [
           "cetus-aggregator",
@@ -39,6 +77,96 @@
     {
       "category": "developer-tools",
       "components": {
+        "mcpServers": {},
+        "skills": [
+          "defi-agent-cli",
+          "navi-sdk"
+        ]
+      },
+      "description": "AI agent skills for building Sui DeFi applications with the NAVI Protocol SDK and defi-agent-cli.",
+      "digest": "sha256-tree-v1:41529fdccd9fe447b3c5aeaa6117974a5a565b4bfe561ca871664d86e8d64fa7",
+      "displayName": "NAVI Protocol",
+      "keywords": [
+        "navi",
+        "sui",
+        "defi",
+        "lending",
+        "swaps"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "navi",
+      "publisher": "NAVI Protocol",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:26f1bec0ca2fd83334a56812adb73a116071b71ecca37a3f94cb6bb665fd9897",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-navi-v0.1.0/navi-0.1.0.tar.gz"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "category": "developer-tools",
+      "components": {
+        "mcpServers": {},
+        "skills": [
+          "scallop-advanced-transactions",
+          "scallop-borrow-incentive",
+          "scallop-client-setup",
+          "scallop-crypto-keys",
+          "scallop-error-handling",
+          "scallop-flash-loan",
+          "scallop-lend-integration",
+          "scallop-liquidation-helper",
+          "scallop-loyalty",
+          "scallop-market-limits",
+          "scallop-obligation-manager",
+          "scallop-oracle",
+          "scallop-overview",
+          "scallop-portfolio-analytics",
+          "scallop-query-data",
+          "scallop-referral",
+          "scallop-rpc-client",
+          "scallop-scasui-staking",
+          "scallop-scoin",
+          "scallop-spool-staking",
+          "scallop-vesca",
+          "scallop-xoracle-integration"
+        ]
+      },
+      "description": "Complete AI skills for Scallop Protocol on Sui - lending, staking, governance, and more.",
+      "digest": "sha256-tree-v1:d6a4b10296c323cb14e4c3475806ed5f4514eab9987eaebd491a768ffd285d82",
+      "displayName": "Scallop Protocol",
+      "keywords": [
+        "scallop",
+        "sui",
+        "defi",
+        "lending",
+        "staking"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "scallop",
+      "publisher": "Scallop",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:e51fe5994e5d2c1af9f8c4db00dfab084a11823308214ae86fe73d906e6e9392",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-scallop-v0.1.0/scallop-0.1.0.tar.gz"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "category": "developer-tools",
+      "components": {
         "mcpServers": {
           "sui-docs": "streamable-http"
         },
@@ -67,7 +195,7 @@
         ]
       },
       "description": "Official Sui development guidance and documentation access for coding agents.",
-      "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
+      "digest": "sha256-tree-v1:315af97b91b0575ee2e5aaecb5848ac43e0e0436226a15b01b5a66c9ec9f9865",
       "displayName": "Sui Development",
       "keywords": [
         "sui",
@@ -86,9 +214,105 @@
         "hermes"
       ],
       "source": {
-        "archiveDigest": "sha256:a9364b27efea274693e0ef7f7a5b56974f020c261876aade22f64df6e8975f24",
+        "archiveDigest": "sha256:b727ba6640199936c32d655f2e881b40d12cc71928d131fa221f2b4dcd8401e5",
         "type": "github-release",
-        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.1.0/sui-0.1.0.tar.gz"
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.2.0/sui-0.2.0.tar.gz"
+      },
+      "version": "0.2.0"
+    },
+    {
+      "category": "developer-tools",
+      "components": {
+        "mcpServers": {
+          "t2000": "streamable-http"
+        },
+        "skills": [
+          "deepbook",
+          "sui-grpc",
+          "sui-move-security",
+          "suins",
+          "t2000-check-balance",
+          "t2000-connect",
+          "t2000-job",
+          "t2000-pay",
+          "t2000-receive",
+          "t2000-send",
+          "t2000-services",
+          "t2000-setup",
+          "t2000-swap",
+          "walrus"
+        ]
+      },
+      "description": "t2000's open source skills for Agentic finance development.",
+      "digest": "sha256-tree-v1:cccae662cbb5d7b646dcfba6a2b9603a81faa623dac4aebf0fb1aadcaf433a2b",
+      "displayName": "t2000 Agent Wallet",
+      "keywords": [
+        "t2000",
+        "sui",
+        "wallet",
+        "payments",
+        "x402"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "t2000",
+      "publisher": "t2000",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:2040d1150158e2486d89a773023177c51a1f5b612e74b28a284b4e3d03c6cdfc",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
+      },
+      "version": "0.1.0"
+    },
+    {
+      "category": "developer-tools",
+      "components": {
+        "mcpServers": {},
+        "skills": [
+          "walrus-blob-lifecycle",
+          "walrus-cli",
+          "walrus-data-security",
+          "walrus-http-api",
+          "walrus-memory",
+          "walrus-move-integration",
+          "walrus-overview",
+          "walrus-quilts",
+          "walrus-sites",
+          "walrus-sites-portal",
+          "walrus-sites-publishing",
+          "walrus-storage-costs",
+          "walrus-troubleshooting",
+          "walrus-ts-sdk"
+        ]
+      },
+      "description": "Reusable agent skills for building on Walrus, the decentralized storage protocol built on Sui.",
+      "digest": "sha256-tree-v1:eff48814c7226fb236b297832cab39b7ac48ad45c5b699b50e3387558163d5fc",
+      "displayName": "Walrus",
+      "keywords": [
+        "walrus",
+        "sui",
+        "storage",
+        "websites",
+        "sdk"
+      ],
+      "languages": [
+        "en"
+      ],
+      "name": "walrus",
+      "publisher": "Mysten Labs",
+      "runtimes": [
+        "openclaw",
+        "hermes"
+      ],
+      "source": {
+        "archiveDigest": "sha256:69776a9c35545a2addbb490449f86ed57e239e29d68bd1eb8ed4538b2f996d57",
+        "type": "github-release",
+        "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-walrus-v0.1.0/walrus-0.1.0.tar.gz"
       },
       "version": "0.1.0"
     }

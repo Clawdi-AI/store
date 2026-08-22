@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 2,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-walrus-v0.1.0",
+    "asset": "walrus-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/MystenLabs/walrus-skills",
+      "commit": "6d429c88d14e3f9fcd4f95ce183ae6d69804e1d3",
+      "mappings": [
+        {
+          "source": "walrus-blob-lifecycle",
+          "target": "skills/walrus-blob-lifecycle"
+        },
+        {
+          "source": "walrus-cli",
+          "target": "skills/walrus-cli"
+        },
+        {
+          "source": "walrus-data-security",
+          "target": "skills/walrus-data-security"
+        },
+        {
+          "source": "walrus-http-api",
+          "target": "skills/walrus-http-api"
+        },
+        {
+          "source": "walrus-memory",
+          "target": "skills/walrus-memory"
+        },
+        {
+          "source": "walrus-move-integration",
+          "target": "skills/walrus-move-integration"
+        },
+        {
+          "source": "walrus-overview",
+          "target": "skills/walrus-overview"
+        },
+        {
+          "source": "walrus-quilts",
+          "target": "skills/walrus-quilts"
+        },
+        {
+          "source": "walrus-sites",
+          "target": "skills/walrus-sites",
+          "exclude": [
+            "portal",
+            "publishing"
+          ],
+          "replacements": [
+            {
+              "path": "SKILL.md",
+              "old": "publishing/SKILL.md",
+              "new": "../walrus-sites-publishing/SKILL.md",
+              "count": 1
+            },
+            {
+              "path": "SKILL.md",
+              "old": "portal/SKILL.md",
+              "new": "../walrus-sites-portal/SKILL.md",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "source": "walrus-sites/portal",
+          "target": "skills/walrus-sites-portal"
+        },
+        {
+          "source": "walrus-sites/publishing",
+          "target": "skills/walrus-sites-publishing"
+        },
+        {
+          "source": "walrus-storage-costs",
+          "target": "skills/walrus-storage-costs"
+        },
+        {
+          "source": "walrus-troubleshooting",
+          "target": "skills/walrus-troubleshooting"
+        },
+        {
+          "source": "walrus-ts-sdk",
+          "target": "skills/walrus-ts-sdk"
+        }
+      ]
+    }
+  ]
+}

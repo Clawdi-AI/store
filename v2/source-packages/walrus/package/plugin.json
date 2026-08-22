@@ -1,26 +1,26 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "sui",
-  "version": "0.2.0",
-  "description": "Official Sui development guidance and documentation access for coding agents.",
+  "name": "walrus",
+  "version": "0.1.0",
+  "description": "Reusable agent skills for building on Walrus, the decentralized storage protocol built on Sui.",
   "author": {
     "name": "Mysten Labs",
     "url": "https://www.mystenlabs.com"
   },
-  "homepage": "https://docs.sui.io/skills",
-  "repository": "https://github.com/MystenLabs/skills",
+  "homepage": "https://docs.wal.app/skills",
+  "repository": "https://github.com/MystenLabs/walrus-skills",
   "keywords": [
+    "walrus",
     "sui",
-    "move",
-    "blockchain",
-    "smart-contracts",
+    "storage",
+    "websites",
     "sdk"
   ],
   "extensions": {
     "ai.clawdi": {
       "schemaVersion": 1,
       "display": {
-        "name": "Sui Development",
+        "name": "Walrus",
         "category": "developer-tools",
         "languages": [
           "en"

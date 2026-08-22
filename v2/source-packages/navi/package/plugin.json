@@ -1,0 +1,38 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "navi",
+  "version": "0.1.0",
+  "description": "AI agent skills for building Sui DeFi applications with the NAVI Protocol SDK and defi-agent-cli.",
+  "author": {
+    "name": "NAVI Protocol",
+    "url": "https://naviprotocol.io"
+  },
+  "homepage": "https://naviprotocol.io",
+  "repository": "https://github.com/naviprotocol/skills",
+  "license": "MIT",
+  "keywords": [
+    "navi",
+    "sui",
+    "defi",
+    "lending",
+    "swaps"
+  ],
+  "extensions": {
+    "ai.clawdi": {
+      "schemaVersion": 1,
+      "display": {
+        "name": "NAVI Protocol",
+        "category": "developer-tools",
+        "languages": [
+          "en"
+        ]
+      },
+      "compatibility": {
+        "runtimes": [
+          "openclaw",
+          "hermes"
+        ]
+      }
+    }
+  }
+}

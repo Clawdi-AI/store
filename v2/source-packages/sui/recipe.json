@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "artifact": {
     "repository": "https://github.com/Clawdi-AI/store",
-    "tag": "agent-plugin-sui-v0.1.0",
-    "asset": "sui-0.1.0.tar.gz"
+    "tag": "agent-plugin-sui-v0.2.0",
+    "asset": "sui-0.2.0.tar.gz"
   },
   "upstreams": [
     {
@@ -88,6 +88,20 @@
           "exclude": [
             "portal",
             "publishing"
+          ],
+          "replacements": [
+            {
+              "path": "SKILL.md",
+              "old": "publishing/SKILL.md",
+              "new": "../walrus-sites-publishing/SKILL.md",
+              "count": 1
+            },
+            {
+              "path": "SKILL.md",
+              "old": "portal/SKILL.md",
+              "new": "../walrus-sites-portal/SKILL.md",
+              "count": 1
+            }
           ]
         },
         {

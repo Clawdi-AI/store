@@ -1,0 +1,52 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {
+        "t2000": "streamable-http"
+      },
+      "skills": [
+        "deepbook",
+        "sui-grpc",
+        "sui-move-security",
+        "suins",
+        "t2000-check-balance",
+        "t2000-connect",
+        "t2000-job",
+        "t2000-pay",
+        "t2000-receive",
+        "t2000-send",
+        "t2000-services",
+        "t2000-setup",
+        "t2000-swap",
+        "walrus"
+      ]
+    },
+    "description": "t2000's open source skills for Agentic finance development.",
+    "displayName": "t2000 Agent Wallet",
+    "keywords": [
+      "t2000",
+      "sui",
+      "wallet",
+      "payments",
+      "x402"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "t2000",
+    "publisher": "t2000",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:cccae662cbb5d7b646dcfba6a2b9603a81faa623dac4aebf0fb1aadcaf433a2b",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:2040d1150158e2486d89a773023177c51a1f5b612e74b28a284b4e3d03c6cdfc",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
+  }
+}

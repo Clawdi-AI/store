@@ -1,0 +1,50 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {},
+      "skills": [
+        "walrus-blob-lifecycle",
+        "walrus-cli",
+        "walrus-data-security",
+        "walrus-http-api",
+        "walrus-memory",
+        "walrus-move-integration",
+        "walrus-overview",
+        "walrus-quilts",
+        "walrus-sites",
+        "walrus-sites-portal",
+        "walrus-sites-publishing",
+        "walrus-storage-costs",
+        "walrus-troubleshooting",
+        "walrus-ts-sdk"
+      ]
+    },
+    "description": "Reusable agent skills for building on Walrus, the decentralized storage protocol built on Sui.",
+    "displayName": "Walrus",
+    "keywords": [
+      "walrus",
+      "sui",
+      "storage",
+      "websites",
+      "sdk"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "walrus",
+    "publisher": "Mysten Labs",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:eff48814c7226fb236b297832cab39b7ac48ad45c5b699b50e3387558163d5fc",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:69776a9c35545a2addbb490449f86ed57e239e29d68bd1eb8ed4538b2f996d57",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-walrus-v0.1.0/walrus-0.1.0.tar.gz"
+  }
+}

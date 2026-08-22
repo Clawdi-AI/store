@@ -1,0 +1,41 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {
+        "aftermath-api": "streamable-http"
+      },
+      "skills": [
+        "aftermath-perpetuals",
+        "aftermath-ts-sdk",
+        "sui-move-gas-optimization"
+      ]
+    },
+    "description": "Agentic skills for integrating with Aftermath Finance.",
+    "displayName": "Aftermath Finance",
+    "keywords": [
+      "aftermath",
+      "sui",
+      "defi",
+      "perpetuals",
+      "sdk"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "aftermath",
+    "publisher": "Aftermath Finance",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:d766205faa1a57926b72386c9c4525aa89122d769c79554eb50c50ce8d779322",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:6c2b460eea5bc0a2a3d6567d8a8cfbd300056cb83ff81a3c7bc96724d7596bac",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-aftermath-v0.1.0/aftermath-0.1.0.tar.gz"
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 2,
+  "artifact": {
+    "repository": "https://github.com/Clawdi-AI/store",
+    "tag": "agent-plugin-scallop-v0.1.0",
+    "asset": "scallop-0.1.0.tar.gz"
+  },
+  "upstreams": [
+    {
+      "repository": "https://github.com/scallop-io/scallop-skills",
+      "commit": "80240772af583c75a17f37e81a259b298e443b01",
+      "mappings": [
+        {
+          "source": "skills/scallop-advanced-transactions",
+          "target": "skills/scallop-advanced-transactions",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-borrow-incentive",
+          "target": "skills/scallop-borrow-incentive",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-client-setup",
+          "target": "skills/scallop-client-setup"
+        },
+        {
+          "source": "skills/scallop-crypto-keys",
+          "target": "skills/scallop-crypto-keys"
+        },
+        {
+          "source": "skills/scallop-error-handling",
+          "target": "skills/scallop-error-handling",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-flash-loan",
+          "target": "skills/scallop-flash-loan",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-lend-integration",
+          "target": "skills/scallop-lend-integration",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-liquidation-helper",
+          "target": "skills/scallop-liquidation-helper",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-loyalty",
+          "target": "skills/scallop-loyalty",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-market-limits",
+          "target": "skills/scallop-market-limits",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-obligation-manager",
+          "target": "skills/scallop-obligation-manager",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-oracle",
+          "target": "skills/scallop-oracle",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-overview",
+          "target": "skills/scallop-overview"
+        },
+        {
+          "source": "skills/scallop-portfolio-analytics",
+          "target": "skills/scallop-portfolio-analytics",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-query-data",
+          "target": "skills/scallop-query-data",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-referral",
+          "target": "skills/scallop-referral",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-rpc-client",
+          "target": "skills/scallop-rpc-client",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-scasui-staking",
+          "target": "skills/scallop-scasui-staking",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-scoin",
+          "target": "skills/scallop-scoin",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-spool-staking",
+          "target": "skills/scallop-spool-staking",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        },
+        {
+          "source": "skills/scallop-vesca",
+          "target": "skills/scallop-vesca"
+        },
+        {
+          "source": "skills/scallop-xoracle-integration",
+          "target": "skills/scallop-xoracle-integration",
+          "frontmatter": {
+            "metadataValues": "json-string"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "source": "LICENSE",
+          "target": "LICENSE"
+        },
+        {
+          "source": "references",
+          "target": "references"
+        },
+        {
+          "source": "agents",
+          "target": "agents"
+        }
+      ]
+    }
+  ]
+}

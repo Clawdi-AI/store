@@ -1,0 +1,38 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {},
+      "skills": [
+        "defi-agent-cli",
+        "navi-sdk"
+      ]
+    },
+    "description": "AI agent skills for building Sui DeFi applications with the NAVI Protocol SDK and defi-agent-cli.",
+    "displayName": "NAVI Protocol",
+    "keywords": [
+      "navi",
+      "sui",
+      "defi",
+      "lending",
+      "swaps"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "navi",
+    "publisher": "NAVI Protocol",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:41529fdccd9fe447b3c5aeaa6117974a5a565b4bfe561ca871664d86e8d64fa7",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:26f1bec0ca2fd83334a56812adb73a116071b71ecca37a3f94cb6bb665fd9897",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-navi-v0.1.0/navi-0.1.0.tar.gz"
+  }
+}
