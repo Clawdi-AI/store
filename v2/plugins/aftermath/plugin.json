@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "aftermath",
+  "version": "0.1.0",
+  "description": "Official Aftermath Finance API discovery through its hosted MCP server.",
+  "author": {
+    "name": "Aftermath Finance",
+    "url": "https://aftermath.finance"
+  },
+  "homepage": "https://docs.aftermath.finance/for-developers/mcp-server",
+  "keywords": [
+    "aftermath",
+    "sui",
+    "defi",
+    "api",
+    "perpetuals"
+  ],
+  "extensions": {
+    "ai.clawdi": {
+      "schemaVersion": 1,
+      "display": {
+        "name": "Aftermath Finance",
+        "category": "developer-tools",
+        "languages": [
+          "en"
+        ]
+      },
+      "compatibility": {
+        "runtimes": [
+          "openclaw",
+          "hermes"
+        ]
+      }
+    }
+  }
+}
