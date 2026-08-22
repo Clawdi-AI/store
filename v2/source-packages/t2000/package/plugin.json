@@ -1,26 +1,27 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "sui",
-  "version": "0.2.0",
-  "description": "Official Sui development guidance and documentation access for coding agents.",
+  "name": "t2000",
+  "version": "0.1.0",
+  "description": "t2000 Agent Wallet guidance for balances, transfers, swaps, jobs, and x402 API payments on Sui.",
   "author": {
-    "name": "Mysten Labs",
-    "url": "https://www.mystenlabs.com"
+    "name": "t2000",
+    "url": "https://t2000.ai"
   },
-  "homepage": "https://docs.sui.io/skills",
-  "repository": "https://github.com/MystenLabs/skills",
+  "homepage": "https://docs.t2000.ai",
+  "repository": "https://github.com/mission69b/t2000-skills",
+  "license": "MIT",
   "keywords": [
+    "t2000",
     "sui",
-    "move",
-    "blockchain",
-    "smart-contracts",
-    "sdk"
+    "wallet",
+    "payments",
+    "x402"
   ],
   "extensions": {
     "ai.clawdi": {
       "schemaVersion": 1,
       "display": {
-        "name": "Sui Development",
+        "name": "t2000 Agent Wallet",
         "category": "developer-tools",
         "languages": [
           "en"

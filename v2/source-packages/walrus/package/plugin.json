@@ -1,25 +1,26 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "aftermath",
+  "name": "walrus",
   "version": "0.1.0",
-  "description": "Official Aftermath Finance API discovery through its hosted MCP server.",
+  "description": "Complete Walrus guidance for decentralized storage, SDKs, sites, encryption, and agent memory on Sui.",
   "author": {
-    "name": "Aftermath Finance",
-    "url": "https://aftermath.finance"
+    "name": "Mysten Labs",
+    "url": "https://www.mystenlabs.com"
   },
-  "homepage": "https://docs.aftermath.finance/for-developers/mcp-server",
+  "homepage": "https://docs.wal.app/skills",
+  "repository": "https://github.com/MystenLabs/walrus-skills",
   "keywords": [
-    "aftermath",
+    "walrus",
     "sui",
-    "defi",
-    "api",
-    "perpetuals"
+    "storage",
+    "websites",
+    "sdk"
   ],
   "extensions": {
     "ai.clawdi": {
       "schemaVersion": 1,
       "display": {
-        "name": "Aftermath Finance",
+        "name": "Walrus",
         "category": "developer-tools",
         "languages": [
           "en"

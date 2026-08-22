@@ -1,0 +1,58 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {},
+      "skills": [
+        "scallop-advanced-transactions",
+        "scallop-borrow-incentive",
+        "scallop-client-setup",
+        "scallop-crypto-keys",
+        "scallop-error-handling",
+        "scallop-flash-loan",
+        "scallop-lend-integration",
+        "scallop-liquidation-helper",
+        "scallop-loyalty",
+        "scallop-market-limits",
+        "scallop-obligation-manager",
+        "scallop-oracle",
+        "scallop-overview",
+        "scallop-portfolio-analytics",
+        "scallop-query-data",
+        "scallop-referral",
+        "scallop-rpc-client",
+        "scallop-scasui-staking",
+        "scallop-scoin",
+        "scallop-spool-staking",
+        "scallop-vesca",
+        "scallop-xoracle-integration"
+      ]
+    },
+    "description": "Complete Scallop Protocol guidance for lending, staking, governance, and SDK integration on Sui.",
+    "displayName": "Scallop Protocol",
+    "keywords": [
+      "scallop",
+      "sui",
+      "defi",
+      "lending",
+      "staking"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "scallop",
+    "publisher": "Scallop",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:d49d5f637e1dd52502fbd784e9c2e2742597106acff7195ff7c38f2cbff70d33",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:9d6e07932354ff013bc89cf7fb6f907a84cf5efa4eb7c757102e5b4a47d6a449",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-scallop-v0.1.0/scallop-0.1.0.tar.gz"
+  }
+}

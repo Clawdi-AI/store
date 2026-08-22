@@ -1,0 +1,38 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "aftermath",
+  "version": "0.1.0",
+  "description": "Aftermath Finance SDK and API integration guidance with hosted MCP access.",
+  "author": {
+    "name": "Aftermath Finance",
+    "url": "https://aftermath.finance"
+  },
+  "homepage": "https://docs.aftermath.finance/for-developers/skills",
+  "repository": "https://github.com/AftermathFinance/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "aftermath",
+    "sui",
+    "defi",
+    "perpetuals",
+    "sdk"
+  ],
+  "extensions": {
+    "ai.clawdi": {
+      "schemaVersion": 1,
+      "display": {
+        "name": "Aftermath Finance",
+        "category": "developer-tools",
+        "languages": [
+          "en"
+        ]
+      },
+      "compatibility": {
+        "runtimes": [
+          "openclaw",
+          "hermes"
+        ]
+      }
+    }
+  }
+}

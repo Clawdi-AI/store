@@ -1,0 +1,38 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "scallop",
+  "version": "0.1.0",
+  "description": "Complete Scallop Protocol guidance for lending, staking, governance, and SDK integration on Sui.",
+  "author": {
+    "name": "Scallop",
+    "url": "https://scallop.io"
+  },
+  "homepage": "https://scallop.io",
+  "repository": "https://github.com/scallop-io/scallop-skills",
+  "license": "MIT",
+  "keywords": [
+    "scallop",
+    "sui",
+    "defi",
+    "lending",
+    "staking"
+  ],
+  "extensions": {
+    "ai.clawdi": {
+      "schemaVersion": 1,
+      "display": {
+        "name": "Scallop Protocol",
+        "category": "developer-tools",
+        "languages": [
+          "en"
+        ]
+      },
+      "compatibility": {
+        "runtimes": [
+          "openclaw",
+          "hermes"
+        ]
+      }
+    }
+  }
+}

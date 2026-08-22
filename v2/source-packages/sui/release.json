@@ -23,10 +23,7 @@
         "sui-object-model",
         "sui-overview",
         "sui-publish",
-        "sui-sdks",
-        "walrus-sites",
-        "walrus-sites-portal",
-        "walrus-sites-publishing"
+        "sui-sdks"
       ]
     },
     "description": "Official Sui development guidance and documentation access for coding agents.",
@@ -47,13 +44,13 @@
       "openclaw",
       "hermes"
     ],
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
-  "digest": "sha256-tree-v1:c4dda94ccbb861177ce8029221824b1e67dc71a5af33d9d9e14f84561257f269",
+  "digest": "sha256-tree-v1:f14f5cf95a50d95e62b38a0c27711ddd868a0252f242eb93eca08c8a5e217049",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:a9364b27efea274693e0ef7f7a5b56974f020c261876aade22f64df6e8975f24",
+    "archiveDigest": "sha256:0d89e3a47ec90bed819381b45c584b3b26d9934fc021cf76740aa06e740fbf81",
     "type": "github-release",
-    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.1.0/sui-0.1.0.tar.gz"
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-sui-v0.2.0/sui-0.2.0.tar.gz"
   }
 }

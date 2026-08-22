@@ -20,12 +20,16 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Callable, Iterable
 from urllib.parse import quote, urlsplit
 
+import yaml
+
 if __package__:
     from .plugin_package import inspect_package
     from .plugin_validation import PluginReport, validate_plugin
+    from .skill_validation import FRONTMATTER_FIELDS, UniqueKeySafeLoader
 else:
     from plugin_package import inspect_package
     from plugin_validation import PluginReport, validate_plugin
+    from skill_validation import FRONTMATTER_FIELDS, UniqueKeySafeLoader
 
 V2_ROOT = Path(__file__).resolve().parent.parent
 REPOSITORY_ROOT = V2_ROOT.parent
@@ -34,7 +38,7 @@ SOURCE_PACKAGES_ROOT = V2_ROOT / "source-packages"
 RECIPE_FILE = "recipe.json"
 RELEASE_FILE = "release.json"
 PACKAGE_TEMPLATE_DIRECTORY = "package"
-RECIPE_SCHEMA_VERSION = 1
+RECIPE_SCHEMA_VERSIONS = {1, 2}
 RELEASE_SCHEMA_VERSION = 1
 
 MAX_UPSTREAM_ARCHIVE_BYTES = 100 * 1024 * 1024
@@ -56,10 +60,32 @@ class SourcePackageError(ValueError):
 
 
 @dataclass(frozen=True)
+class FrontmatterNormalization:
+    unknown_fields: str | None
+    metadata_values: str | None
+
+
+@dataclass(frozen=True)
+class TextReplacement:
+    path: str
+    old: str
+    new: str
+    count: int
+
+
+@dataclass(frozen=True)
 class SourceMapping:
     source: str
     target: str
     exclude: tuple[str, ...]
+    frontmatter: FrontmatterNormalization | None
+    replacements: tuple[TextReplacement, ...]
+
+
+@dataclass(frozen=True)
+class SourceAsset:
+    source: str
+    target: str
 
 
 @dataclass(frozen=True)
@@ -67,6 +93,7 @@ class UpstreamSource:
     repository: str
     commit: str
     mappings: tuple[SourceMapping, ...]
+    assets: tuple[SourceAsset, ...]
 
 
 @dataclass(frozen=True)
@@ -83,6 +110,7 @@ class ArtifactTarget:
 @dataclass(frozen=True)
 class SourceRecipe:
     root: Path
+    schema_version: int
     artifact: ArtifactTarget
     upstreams: tuple[UpstreamSource, ...]
 
@@ -172,6 +200,28 @@ def _safe_relative_path(value: Any, *, context: str) -> str:
     return value
 
 
+def _bounded_text(value: Any, *, context: str, allow_empty: bool = False) -> str:
+    if (
+        not isinstance(value, str)
+        or (not allow_empty and not value)
+        or len(value.encode("utf-8")) > 10_000
+        or "\x00" in value
+    ):
+        qualifier = "a bounded string" if allow_empty else "a non-empty bounded string"
+        raise SourcePackageError(f"{context} must be {qualifier}")
+    return value
+
+
+def _target_overlaps(target: str, targets: set[str]) -> bool:
+    folded = target.casefold()
+    return any(
+        folded == existing
+        or folded.startswith(f"{existing}/")
+        or existing.startswith(f"{folded}/")
+        for existing in targets
+    )
+
+
 def load_recipe(path: Path) -> SourceRecipe:
     """Load one closed source-package recipe."""
 
@@ -180,8 +230,9 @@ def load_recipe(path: Path) -> SourceRecipe:
         fields={"schemaVersion", "artifact", "upstreams"},
         context=path.as_posix(),
     )
-    if document.get("schemaVersion") != RECIPE_SCHEMA_VERSION:
-        raise SourcePackageError(f"{path.as_posix()}: schemaVersion must equal 1")
+    schema_version = document.get("schemaVersion")
+    if schema_version not in RECIPE_SCHEMA_VERSIONS or type(schema_version) is not int:
+        raise SourcePackageError(f"{path.as_posix()}: schemaVersion must equal 1 or 2")
 
     artifact_document = _closed_object(
         document.get("artifact"),
@@ -215,7 +266,9 @@ def load_recipe(path: Path) -> SourceRecipe:
         upstream_context = f"{path.as_posix()}.upstreams[{upstream_index}]"
         upstream_document = _closed_object(
             raw_upstream,
-            fields={"repository", "commit", "mappings"},
+            fields={"repository", "commit", "mappings", "assets"}
+            if schema_version == 2
+            else {"repository", "commit", "mappings"},
             context=upstream_context,
         )
         upstream_repository = _canonical_github_repository(
@@ -232,7 +285,9 @@ def load_recipe(path: Path) -> SourceRecipe:
             mapping_context = f"{upstream_context}.mappings[{mapping_index}]"
             mapping_document = _closed_object(
                 raw_mapping,
-                fields={"source", "target", "exclude"},
+                fields={"source", "target", "exclude", "frontmatter", "replacements"}
+                if schema_version == 2
+                else {"source", "target", "exclude"},
                 context=mapping_context,
             )
             source = _safe_relative_path(
@@ -243,8 +298,8 @@ def load_recipe(path: Path) -> SourceRecipe:
             )
             if not target.startswith("skills/"):
                 raise SourcePackageError(f"{mapping_context}.target must be under skills/")
-            if target.casefold() in targets:
-                raise SourcePackageError(f"{mapping_context}.target duplicates another target")
+            if _target_overlaps(target, targets):
+                raise SourcePackageError(f"{mapping_context}.target overlaps another target")
             targets.add(target.casefold())
             raw_exclude = mapping_document.get("exclude", [])
             if not isinstance(raw_exclude, list) or len(raw_exclude) > 100:
@@ -255,16 +310,118 @@ def load_recipe(path: Path) -> SourceRecipe:
             )
             if len({item.casefold() for item in exclude}) != len(exclude):
                 raise SourcePackageError(f"{mapping_context}.exclude contains duplicates")
-            mappings.append(SourceMapping(source=source, target=target, exclude=exclude))
+
+            frontmatter: FrontmatterNormalization | None = None
+            raw_frontmatter = mapping_document.get("frontmatter")
+            if raw_frontmatter is not None:
+                frontmatter_document = _closed_object(
+                    raw_frontmatter,
+                    fields={"unknownFields", "metadataValues"},
+                    context=f"{mapping_context}.frontmatter",
+                )
+                unknown_fields = frontmatter_document.get("unknownFields")
+                metadata_values = frontmatter_document.get("metadataValues")
+                if unknown_fields not in {None, "metadata"}:
+                    raise SourcePackageError(
+                        f"{mapping_context}.frontmatter.unknownFields must equal metadata"
+                    )
+                if metadata_values not in {None, "json-string"}:
+                    raise SourcePackageError(
+                        f"{mapping_context}.frontmatter.metadataValues must equal json-string"
+                    )
+                if unknown_fields is None and metadata_values is None:
+                    raise SourcePackageError(f"{mapping_context}.frontmatter must not be empty")
+                frontmatter = FrontmatterNormalization(
+                    unknown_fields=unknown_fields,
+                    metadata_values=metadata_values,
+                )
+
+            raw_replacements = mapping_document.get("replacements", [])
+            if not isinstance(raw_replacements, list) or len(raw_replacements) > 100:
+                raise SourcePackageError(f"{mapping_context}.replacements must be an array")
+            replacements: list[TextReplacement] = []
+            for replacement_index, raw_replacement in enumerate(raw_replacements):
+                replacement_context = (
+                    f"{mapping_context}.replacements[{replacement_index}]"
+                )
+                replacement_document = _closed_object(
+                    raw_replacement,
+                    fields={"path", "old", "new", "count"},
+                    context=replacement_context,
+                )
+                replacement_path = _safe_relative_path(
+                    replacement_document.get("path"),
+                    context=f"{replacement_context}.path",
+                )
+                old = _bounded_text(
+                    replacement_document.get("old"), context=f"{replacement_context}.old"
+                )
+                new = _bounded_text(
+                    replacement_document.get("new"),
+                    context=f"{replacement_context}.new",
+                    allow_empty=True,
+                )
+                count = replacement_document.get("count", 1)
+                if type(count) is not int or not 1 <= count <= 1_000:
+                    raise SourcePackageError(
+                        f"{replacement_context}.count must be an integer from 1 to 1000"
+                    )
+                if old == new:
+                    raise SourcePackageError(f"{replacement_context}.old and new must differ")
+                replacements.append(
+                    TextReplacement(
+                        path=replacement_path,
+                        old=old,
+                        new=new,
+                        count=count,
+                    )
+                )
+            mappings.append(
+                SourceMapping(
+                    source=source,
+                    target=target,
+                    exclude=exclude,
+                    frontmatter=frontmatter,
+                    replacements=tuple(replacements),
+                )
+            )
+
+        raw_assets = upstream_document.get("assets", [])
+        if not isinstance(raw_assets, list) or len(raw_assets) > 100:
+            raise SourcePackageError(f"{upstream_context}.assets must be an array")
+        assets: list[SourceAsset] = []
+        for asset_index, raw_asset in enumerate(raw_assets):
+            asset_context = f"{upstream_context}.assets[{asset_index}]"
+            asset_document = _closed_object(
+                raw_asset,
+                fields={"source", "target"},
+                context=asset_context,
+            )
+            asset_source = _safe_relative_path(
+                asset_document.get("source"), context=f"{asset_context}.source"
+            )
+            asset_target = _safe_relative_path(
+                asset_document.get("target"), context=f"{asset_context}.target"
+            )
+            if asset_target == "skills" or asset_target.startswith("skills/"):
+                raise SourcePackageError(f"{asset_context}.target must not be under skills/")
+            if asset_target.casefold() in {"plugin.json", "mcp.json", "sources.json"}:
+                raise SourcePackageError(f"{asset_context}.target is reserved")
+            if _target_overlaps(asset_target, targets):
+                raise SourcePackageError(f"{asset_context}.target overlaps another target")
+            targets.add(asset_target.casefold())
+            assets.append(SourceAsset(source=asset_source, target=asset_target))
         upstreams.append(
             UpstreamSource(
                 repository=upstream_repository,
                 commit=commit,
                 mappings=tuple(mappings),
+                assets=tuple(assets),
             )
         )
     return SourceRecipe(
         root=path.parent,
+        schema_version=schema_version,
         artifact=ArtifactTarget(repository=repository, tag=tag, asset=asset),
         upstreams=tuple(upstreams),
     )
@@ -396,6 +553,115 @@ def _copy_template(recipe: SourceRecipe, package_root: Path) -> None:
         _write_regular_file(package_root, relative, source.read_bytes(), mode)
 
 
+def _metadata_string(value: Any, *, context: str) -> str:
+    if isinstance(value, str):
+        return value
+    try:
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    except (TypeError, ValueError) as exc:
+        raise SourcePackageError(f"{context} cannot be represented as canonical JSON") from exc
+
+
+def _normalize_skill_frontmatter(
+    content: bytes,
+    normalization: FrontmatterNormalization,
+    *,
+    context: str,
+) -> bytes:
+    try:
+        text = content.decode("utf-8")
+    except UnicodeError as exc:
+        raise SourcePackageError(f"{context} must be UTF-8 for frontmatter normalization") from exc
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].rstrip("\r\n") != "---":
+        raise SourcePackageError(f"{context} must start with YAML frontmatter")
+    try:
+        end = next(
+            index for index, line in enumerate(lines[1:], start=1) if line.rstrip("\r\n") == "---"
+        )
+    except StopIteration as exc:
+        raise SourcePackageError(f"{context} frontmatter is not closed") from exc
+    try:
+        frontmatter = yaml.load("".join(lines[1:end]), Loader=UniqueKeySafeLoader)
+    except yaml.YAMLError as exc:
+        raise SourcePackageError(f"{context} has invalid YAML frontmatter: {exc}") from exc
+    if not isinstance(frontmatter, dict):
+        raise SourcePackageError(f"{context} frontmatter must be a mapping")
+
+    raw_metadata = frontmatter.get("metadata")
+    if raw_metadata is None:
+        metadata: dict[str, Any] = {}
+    elif isinstance(raw_metadata, dict) and all(isinstance(key, str) for key in raw_metadata):
+        metadata = dict(raw_metadata)
+    else:
+        raise SourcePackageError(f"{context} metadata must be a string-keyed mapping")
+
+    if normalization.unknown_fields == "metadata":
+        for field_name in list(frontmatter):
+            if not isinstance(field_name, str):
+                raise SourcePackageError(f"{context} frontmatter field names must be strings")
+            if field_name in FRONTMATTER_FIELDS:
+                continue
+            metadata_name = f"upstream.{field_name}"
+            if metadata_name in metadata:
+                raise SourcePackageError(f"{context} metadata already contains {metadata_name!r}")
+            metadata[metadata_name] = _metadata_string(
+                frontmatter.pop(field_name), context=f"{context}.{field_name}"
+            )
+
+    if normalization.metadata_values == "json-string":
+        metadata = {
+            key: _metadata_string(value, context=f"{context}.metadata.{key}")
+            for key, value in metadata.items()
+        }
+
+    if metadata:
+        frontmatter["metadata"] = metadata
+    elif "metadata" in frontmatter:
+        frontmatter.pop("metadata")
+
+    rendered = yaml.safe_dump(
+        frontmatter,
+        allow_unicode=True,
+        default_flow_style=False,
+        sort_keys=False,
+        width=10_000,
+    )
+    body = "".join(lines[end + 1 :])
+    return f"---\n{rendered}---\n{body}".encode("utf-8")
+
+
+def _transform_mapping_content(
+    mapping: SourceMapping,
+    relative: str,
+    content: bytes,
+    *,
+    context: str,
+) -> bytes:
+    transformed = content
+    if mapping.frontmatter is not None and relative == "SKILL.md":
+        transformed = _normalize_skill_frontmatter(
+            transformed,
+            mapping.frontmatter,
+            context=context,
+        )
+    relevant = [replacement for replacement in mapping.replacements if replacement.path == relative]
+    if not relevant:
+        return transformed
+    try:
+        text = transformed.decode("utf-8")
+    except UnicodeError as exc:
+        raise SourcePackageError(f"{context} must be UTF-8 for text replacement") from exc
+    for replacement in relevant:
+        actual = text.count(replacement.old)
+        if actual != replacement.count:
+            raise SourcePackageError(
+                f"{context} replacement expected {replacement.count} occurrence(s), found {actual}"
+            )
+        text = text.replace(replacement.old, replacement.new, replacement.count)
+    return text.encode("utf-8")
+
+
 def _copy_upstream(
     package_root: Path,
     upstream: UpstreamSource,
@@ -405,6 +671,7 @@ def _copy_upstream(
     for mapping in upstream.mappings:
         prefix = f"{mapping.source}/"
         selected = 0
+        selected_paths: set[str] = set()
         for source_path in sorted(files, key=lambda value: value.encode("utf-8")):
             if source_path == mapping.source:
                 relative = PurePosixPath(source_path).name
@@ -415,29 +682,108 @@ def _copy_upstream(
             if _excluded(relative, mapping.exclude):
                 continue
             content, mode = files[source_path]
-            _write_regular_file(package_root, f"{mapping.target}/{relative}", content, mode)
+            context = f"{upstream.repository}@{upstream.commit}:{source_path}"
+            transformed = _transform_mapping_content(
+                mapping,
+                relative,
+                content,
+                context=context,
+            )
+            _write_regular_file(
+                package_root,
+                f"{mapping.target}/{relative}",
+                transformed,
+                mode,
+            )
+            selected_paths.add(relative)
             selected += 1
         if selected == 0:
             raise SourcePackageError(
-                f"pinned source path is missing or empty: {upstream.repository}@{upstream.commit}:{mapping.source}"
+                "pinned source path is missing or empty: "
+                f"{upstream.repository}@{upstream.commit}:{mapping.source}"
+            )
+        if mapping.frontmatter is not None and "SKILL.md" not in selected_paths:
+            raise SourcePackageError(
+                "frontmatter normalization target is missing: "
+                f"{upstream.repository}@{upstream.commit}:{mapping.source}/SKILL.md"
+            )
+        for replacement in mapping.replacements:
+            if replacement.path not in selected_paths:
+                raise SourcePackageError(
+                    f"replacement target is missing: {upstream.repository}@{upstream.commit}:"
+                    f"{mapping.source}/{replacement.path}"
+                )
+
+    for asset in upstream.assets:
+        if asset.source in files:
+            content, mode = files[asset.source]
+            _write_regular_file(package_root, asset.target, content, mode)
+            continue
+        prefix = f"{asset.source}/"
+        selected = 0
+        for source_path in sorted(files, key=lambda value: value.encode("utf-8")):
+            if not source_path.startswith(prefix):
+                continue
+            relative = source_path[len(prefix) :]
+            content, mode = files[source_path]
+            _write_regular_file(package_root, f"{asset.target}/{relative}", content, mode)
+            selected += 1
+        if selected == 0:
+            raise SourcePackageError(
+                "pinned asset path is missing or empty: "
+                f"{upstream.repository}@{upstream.commit}:{asset.source}"
             )
 
 
 def _source_provenance(recipe: SourceRecipe) -> JsonObject:
+    def mapping_document(mapping: SourceMapping) -> JsonObject:
+        document: JsonObject = {
+            "source": mapping.source,
+            "target": mapping.target,
+            **({"exclude": list(mapping.exclude)} if mapping.exclude else {}),
+        }
+        if mapping.frontmatter is not None:
+            document["frontmatter"] = {
+                **(
+                    {"unknownFields": mapping.frontmatter.unknown_fields}
+                    if mapping.frontmatter.unknown_fields is not None
+                    else {}
+                ),
+                **(
+                    {"metadataValues": mapping.frontmatter.metadata_values}
+                    if mapping.frontmatter.metadata_values is not None
+                    else {}
+                ),
+            }
+        if mapping.replacements:
+            document["replacements"] = [
+                {
+                    "path": replacement.path,
+                    "old": replacement.old,
+                    "new": replacement.new,
+                    "count": replacement.count,
+                }
+                for replacement in mapping.replacements
+            ]
+        return document
+
     return {
-        "schemaVersion": 1,
+        "schemaVersion": recipe.schema_version,
         "sources": [
             {
                 "repository": upstream.repository,
                 "commit": upstream.commit,
-                "mappings": [
+                "mappings": [mapping_document(mapping) for mapping in upstream.mappings],
+                **(
                     {
-                        "source": mapping.source,
-                        "target": mapping.target,
-                        **({"exclude": list(mapping.exclude)} if mapping.exclude else {}),
+                        "assets": [
+                            {"source": asset.source, "target": asset.target}
+                            for asset in upstream.assets
+                        ]
                     }
-                    for mapping in upstream.mappings
-                ],
+                    if upstream.assets
+                    else {}
+                ),
             }
             for upstream in recipe.upstreams
         ],

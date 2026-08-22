@@ -1,0 +1,47 @@
+{
+  "catalog": {
+    "category": "developer-tools",
+    "components": {
+      "mcpServers": {
+        "t2000": "streamable-http"
+      },
+      "skills": [
+        "t2000-check-balance",
+        "t2000-connect",
+        "t2000-job",
+        "t2000-pay",
+        "t2000-receive",
+        "t2000-send",
+        "t2000-services",
+        "t2000-setup",
+        "t2000-swap"
+      ]
+    },
+    "description": "t2000 Agent Wallet guidance for balances, transfers, swaps, jobs, and x402 API payments on Sui.",
+    "displayName": "t2000 Agent Wallet",
+    "keywords": [
+      "t2000",
+      "sui",
+      "wallet",
+      "payments",
+      "x402"
+    ],
+    "languages": [
+      "en"
+    ],
+    "name": "t2000",
+    "publisher": "t2000",
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "version": "0.1.0"
+  },
+  "digest": "sha256-tree-v1:1da7be79379fc89008b8bc72f73b05d5a8a8c00413345dd8c4c70371a5251bc3",
+  "schemaVersion": 1,
+  "source": {
+    "archiveDigest": "sha256:05e59e97e47c752479845dafcc2d64d664d32a81ed836ba923f726ea360bc3fc",
+    "type": "github-release",
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
+  }
+}
