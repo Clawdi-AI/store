@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "artifact": {
     "repository": "https://github.com/Clawdi-AI/store",
-    "tag": "agent-plugin-sui-v0.2.0",
-    "asset": "sui-0.2.0.tar.gz"
+    "tag": "agent-plugin-sui-v0.1.0",
+    "asset": "sui-0.1.0.tar.gz"
   },
   "upstreams": [
     {
@@ -81,6 +81,22 @@
         {
           "source": "sui-sdks",
           "target": "skills/sui-sdks"
+        },
+        {
+          "source": "walrus-sites",
+          "target": "skills/walrus-sites",
+          "exclude": [
+            "portal",
+            "publishing"
+          ]
+        },
+        {
+          "source": "walrus-sites/portal",
+          "target": "skills/walrus-sites-portal"
+        },
+        {
+          "source": "walrus-sites/publishing",
+          "target": "skills/walrus-sites-publishing"
         }
       ]
     }

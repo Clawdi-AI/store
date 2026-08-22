@@ -11,6 +11,22 @@
       "commit": "9f75c3d92b72879799d40e36b11dbb53d67f7dd0",
       "mappings": [
         {
+          "source": "skills/deepbook",
+          "target": "skills/deepbook"
+        },
+        {
+          "source": "skills/sui-grpc",
+          "target": "skills/sui-grpc"
+        },
+        {
+          "source": "skills/sui-move-security",
+          "target": "skills/sui-move-security"
+        },
+        {
+          "source": "skills/suins",
+          "target": "skills/suins"
+        },
+        {
           "source": "skills/t2000-check-balance",
           "target": "skills/t2000-check-balance"
         },
@@ -51,6 +67,10 @@
         {
           "source": "skills/t2000-swap",
           "target": "skills/t2000-swap"
+        },
+        {
+          "source": "skills/walrus",
+          "target": "skills/walrus"
         }
       ],
       "assets": [

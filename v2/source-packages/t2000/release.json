@@ -6,6 +6,10 @@
         "t2000": "streamable-http"
       },
       "skills": [
+        "deepbook",
+        "sui-grpc",
+        "sui-move-security",
+        "suins",
         "t2000-check-balance",
         "t2000-connect",
         "t2000-job",
@@ -14,10 +18,11 @@
         "t2000-send",
         "t2000-services",
         "t2000-setup",
-        "t2000-swap"
+        "t2000-swap",
+        "walrus"
       ]
     },
-    "description": "t2000 Agent Wallet guidance for balances, transfers, swaps, jobs, and x402 API payments on Sui.",
+    "description": "t2000 Agent Wallet and Sui ecosystem guidance for payments, DeFi, identity, storage, and secure Move development.",
     "displayName": "t2000 Agent Wallet",
     "keywords": [
       "t2000",
@@ -37,10 +42,10 @@
     ],
     "version": "0.1.0"
   },
-  "digest": "sha256-tree-v1:1da7be79379fc89008b8bc72f73b05d5a8a8c00413345dd8c4c70371a5251bc3",
+  "digest": "sha256-tree-v1:a05e486097eb41af5022d66109de7c8455804660305f4b85fb7e61a831778d8e",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:05e59e97e47c752479845dafcc2d64d664d32a81ed836ba923f726ea360bc3fc",
+    "archiveDigest": "sha256:ed612ea7414a1229f2c036447eb7819b96e1462223f1a5799915b418b6556d13",
     "type": "github-release",
     "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
   }
