@@ -2,30 +2,14 @@
   "schemaVersion": 2,
   "artifact": {
     "repository": "https://github.com/Clawdi-AI/store",
-    "tag": "agent-plugin-t2000-v0.1.0",
-    "asset": "t2000-0.1.0.tar.gz"
+    "tag": "agent-plugin-t2000-v0.2.0",
+    "asset": "t2000-0.2.0.tar.gz"
   },
   "upstreams": [
     {
       "repository": "https://github.com/mission69b/t2000-skills",
-      "commit": "9f75c3d92b72879799d40e36b11dbb53d67f7dd0",
+      "commit": "af7351dfca0969fffae7dbcbb71cf826694a8f5b",
       "mappings": [
-        {
-          "source": "skills/deepbook",
-          "target": "skills/deepbook"
-        },
-        {
-          "source": "skills/sui-grpc",
-          "target": "skills/sui-grpc"
-        },
-        {
-          "source": "skills/sui-move-security",
-          "target": "skills/sui-move-security"
-        },
-        {
-          "source": "skills/suins",
-          "target": "skills/suins"
-        },
         {
           "source": "skills/t2000-check-balance",
           "target": "skills/t2000-check-balance"
@@ -33,6 +17,13 @@
         {
           "source": "skills/t2000-connect",
           "target": "skills/t2000-connect"
+        },
+        {
+          "source": "skills/t2000-earn",
+          "target": "skills/t2000-earn",
+          "frontmatter": {
+            "unknownFields": "metadata"
+          }
         },
         {
           "source": "skills/t2000-job",
@@ -67,10 +58,6 @@
         {
           "source": "skills/t2000-swap",
           "target": "skills/t2000-swap"
-        },
-        {
-          "source": "skills/walrus",
-          "target": "skills/walrus"
         }
       ],
       "assets": [
