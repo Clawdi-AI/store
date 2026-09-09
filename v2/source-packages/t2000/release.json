@@ -6,20 +6,16 @@
         "t2000": "streamable-http"
       },
       "skills": [
-        "deepbook",
-        "sui-grpc",
-        "sui-move-security",
-        "suins",
         "t2000-check-balance",
         "t2000-connect",
+        "t2000-earn",
         "t2000-job",
         "t2000-pay",
         "t2000-receive",
         "t2000-send",
         "t2000-services",
         "t2000-setup",
-        "t2000-swap",
-        "walrus"
+        "t2000-swap"
       ]
     },
     "description": "t2000's open source skills for Agentic finance development.",
@@ -40,13 +36,13 @@
       "openclaw",
       "hermes"
     ],
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
-  "digest": "sha256-tree-v1:cccae662cbb5d7b646dcfba6a2b9603a81faa623dac4aebf0fb1aadcaf433a2b",
+  "digest": "sha256-tree-v1:e916d9fcdc161d83587affcf9d781a296f369d5c1ccf76648b8ca0090939655e",
   "schemaVersion": 1,
   "source": {
-    "archiveDigest": "sha256:2040d1150158e2486d89a773023177c51a1f5b612e74b28a284b4e3d03c6cdfc",
+    "archiveDigest": "sha256:5e7322f160292ac8984e09edda22e8d3736d3a7634b1484146fa699ac1e815bc",
     "type": "github-release",
-    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.1.0/t2000-0.1.0.tar.gz"
+    "url": "https://github.com/Clawdi-AI/store/releases/download/agent-plugin-t2000-v0.2.0/t2000-0.2.0.tar.gz"
   }
 }
